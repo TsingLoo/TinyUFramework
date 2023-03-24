@@ -44,6 +44,13 @@ public class SingletonForMonobehaviour<T> : MonoBehaviour where T : MonoBehaviou
         }
     }
 
+    protected virtual void OnApplicationQuit()
+    {
+        if (_instance == null) return;
+        Destroy(_instance.gameObject);
+        _instance = null;
+    }
+
     private static bool applicationIsQuitting = false;
 
     public void OnDestroy()

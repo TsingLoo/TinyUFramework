@@ -1,13 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
-using UnityEngine.UI;
 using LitJson;
 using System.IO;
 using System;
 using DG.Tweening;
-using System.Diagnostics.Contracts;
+
 
 public class PanelManager : Singleton<PanelManager>
 {
@@ -15,12 +12,12 @@ public class PanelManager : Singleton<PanelManager>
 
     //Unity Editor：<path to project folder>/Assets
     readonly string panelPrefabPath = Application.dataPath + @"/Bundles/Resources/Prefabs/UI/Panel/";
-    readonly string jsonPath = Application.dataPath + @"/Bundles/Json/UIJson.json";
+    readonly string jsonPath = Application.dataPath + @"/Bundles/Resources/Json/UIJson.json";
 
     /// <summary>
     /// 记录了所有UIPanel类的列表
     /// </summary>
-    private List<UIPanel> AllPanelList;
+    private List<UIPanelJson> AllPanelList;
     //开发一个给出面板类型，就实例化该面板，并返回面板上挂载的BasePanel组件的方法
     private Dictionary<eUIPanelType, BasePanel> panelDict;
     //使用栈来存储当前场景中正在显示的Panel
@@ -39,22 +36,31 @@ public class PanelManager : Singleton<PanelManager>
     }
 
 
-    public List<UIPanel> ReadJsonFile(string jsonPath)
+    public void InitPanelManager() 
+    {
+#if false
+        RefreshUIPanelInfoJson();
+#endif
+        GetPanelDictFromPrefabLoader();
+
+    }
+
+    public List<UIPanelJson> ReadJsonFile(string jsonPath)
     {
         //如果找不到UIJson文件，则新建一个Json文件并写入“[]”
         //如果仅新建一个空Json文件，Json转换会返回一个null，也就是后面的list等于null，之后使用list的操作就会报一个空指针错误。
         if (!File.Exists(jsonPath))
         {
-            Debug.Log("[UIManager]找不到" + jsonPath + "文件");
+            Debug.Log("[PanelManager]找不到" + jsonPath + "文件");
             File.WriteAllText(jsonPath, "[]");
         }
-        List<UIPanel> list = JsonMapper.ToObject<List<UIPanel>>(File.ReadAllText(jsonPath));
+        List<UIPanelJson> list = JsonMapper.ToObject<List<UIPanelJson>>(File.ReadAllText(jsonPath));
 
         return list;
     }
 
     //将UIPanel列表内容写到Json文件中
-    public void WriteJsonFile(string jsonPath, List<UIPanel> list)
+    public void WriteJsonFile(string jsonPath, List<UIPanelJson> list)
     {
         string json = JsonMapper.ToJson(list);
         File.WriteAllText(jsonPath, json);
@@ -65,7 +71,7 @@ public class PanelManager : Singleton<PanelManager>
     /// </summary>
     public void RefreshUIPanelInfoJson()
     {
-        Debug.Log("[UIManager]开始更新ALLPanelList");
+        Debug.Log("[PanelManager]开始更新ALLPanelList");
         AllPanelList = ReadJsonFile(jsonPath);
         //读取存储面板prefeb的文件夹的信息
         DirectoryInfo folder = new DirectoryInfo(panelPrefabPath);
@@ -82,17 +88,17 @@ public class PanelManager : Singleton<PanelManager>
             //string path = panelPrefabPath + file.Name;
             //string path = @"Prefabs/UI/Panel/" + file.Name;
 
-            UIPanel uIPanel = AllPanelList.SearchPanelForType(type);
+            UIPanelJson uIPanel = AllPanelList.SearchPanelForType(type);
 
             if (uIPanel != null)//UIPanel在该List中,更新path值
             {
-                Debug.Log("[UIManager]" + type + "在List中，更新path值: " + path);
+                Debug.Log("[PanelManager]" + type + "在List中，更新path值: " + path);
                 uIPanel.UIPanelPath = path;
             }
             else
             {
-                Debug.Log("[UIManager]" + type + "不在List中，添加path值: " + path);
-                UIPanel panel = new UIPanel
+                Debug.Log("[PanelManager]" + type + "不在List中，添加path值: " + path);
+                UIPanelJson panel = new UIPanelJson
                 {
                     UIPanelType = type,
                     UIPanelPath = path
@@ -103,7 +109,12 @@ public class PanelManager : Singleton<PanelManager>
 
         WriteJsonFile(jsonPath, AllPanelList);
         //AssetDatabase.Refresh();
-        Debug.Log("[UIManager]结束更新ALLPanelList");
+        Debug.Log("[PanelManager]结束更新ALLPanelList");
+    }
+
+    private void GetPanelDictFromPrefabLoader() 
+    {
+        panelDict = PrefabLoader.Instance.GetPanelDict();
     }
 
     ///<summary>
@@ -112,7 +123,7 @@ public class PanelManager : Singleton<PanelManager>
     /// <param name="type"></param>
     public void OpenPanel(eUIPanelType type)
     {
-        Debug.Log("[UIManager]" + type + " is opened");
+        Debug.Log("[PanelManager]" + type + " is opened");
         PushPanel(type);
     }
 
@@ -122,7 +133,7 @@ public class PanelManager : Singleton<PanelManager>
     /// <param name="type"></param>
     public void OpenPanel<T>(eUIPanelType type, T param = default(T)) where T : IPanelParams
     {
-        Debug.Log("[UIManager]" + type + " is opened");
+        Debug.Log("[PanelManager]" + type + " is opened");
         BasePanel panel = GetPanel(type);
         panel.SetPanelParam(param);
         PushPanel(type);
@@ -130,7 +141,7 @@ public class PanelManager : Singleton<PanelManager>
 
     public void StartLoading()
     {
-        Debug.Log("[UIManager]Begin to load");
+        Debug.Log("[PanelManager]Begin to load");
         OpenPanel(eUIPanelType.LoadingPanel);
         foreach (BasePanel bp in panelStack)
         {
@@ -161,7 +172,10 @@ public class PanelManager : Singleton<PanelManager>
     public BasePanel GetPanel(eUIPanelType type)
     {
         if (panelDict == null)
+        {
             panelDict = new Dictionary<eUIPanelType, BasePanel>();
+            Debug.Log($"[PanelManager]Failed to find {nameof(panelDict)}, create one");
+        }
         //【扩展方法】通过type查找字典里对应的BasePanel，若找不到则返回null，具体见Extension部分
         BasePanel panel = panelDict.TryGetValue(type);
 
@@ -173,10 +187,10 @@ public class PanelManager : Singleton<PanelManager>
             //【扩展方法】通过Type查找列表里对应的UIPanel，若找不到则返回null，具体见Extension部分
             string path = AllPanelList.SearchPanelForType(type).UIPanelPath;
             if (path == null)
-                throw new Exception("[UIManager]找不到该UIPanelType的Prefab");
+                throw new Exception("[PanelManager]找不到该UIPanelType的Prefab");
 
             if (Resources.Load(path) == null)
-                throw new Exception("[UIManager]找不到该Path(" + path + ")的Prefab");
+                throw new Exception("[PanelManager]找不到该Path(" + path + ")的Prefab");
             //实例化prefab
             GameObject instPanel = GameObject.Instantiate(Resources.Load(path)) as GameObject;
             //把面板设为Canvas的子物体，false表示不保持worldPosition，而是根据Canvas的坐标设定localPosition
@@ -195,7 +209,6 @@ public class PanelManager : Singleton<PanelManager>
     {
         if (panelStack == null)
             panelStack = new Stack<BasePanel>();
-
         //判断栈里是否有其他panel,若有,则把原栈顶panel设定其状态为暂停(OnPause)
         if (panelStack.Count > 0)
         {
@@ -203,13 +216,16 @@ public class PanelManager : Singleton<PanelManager>
             topPanel.OnPause();
         }
 
-        BasePanel panel = GetPanel(type);
 
+        BasePanel panel = GetPanel(type);
+        panel.gameObject.SetActive(true);
         //把指定类型的panel入栈并设定其状态为进入场景(OnEnter)
         panelStack.Push(panel);
+
+
         if (panel == null)
         {
-            Debug.LogWarning("[UIManager]" + type + " 未挂载组件 " + typeof(BasePanel));
+            Debug.LogWarning("[PanelManager]" + type + " 未挂载组件 " + typeof(BasePanel));
             return;
         }
         panel.OnEnter();
@@ -224,9 +240,15 @@ public class PanelManager : Singleton<PanelManager>
         //检查栈是否为空，若为空则直接退出方法
         if (panelStack.Count <= 0) return;
 
+        //foreach (var e in panelStack)
+        //{
+        //    Debug.Log(e.transform.name);
+        //}
+
+
         //把栈顶panel出栈，并把该panel状态设为退出场景(OnExit)
         BasePanel topPanel = panelStack.Pop();
-        Debug.Log("[UIManager]" + topPanel.GetPanelType() + " is now popped");
+        Debug.Log("[PanelManager]" + topPanel.GetPanelType() + " is now popped");
         topPanel.OnExit();
 
         //再次检查出栈栈顶Panel后栈是否为空

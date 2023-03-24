@@ -8,12 +8,13 @@ public enum eUIPanelType
     BasePanel = 0,
     SettingPanel,
     ConfirmPopupPanel,
-    LaunchPanel,
+    StartMenu,
+    PauseMenu,
     LoadingPanel,
     ConfigPanel
 }
 
-public class UIPanel
+public class UIPanelJson
 {
     public eUIPanelType UIPanelType;
     public string UIPanelPath;

@@ -35,7 +35,7 @@ public static class UtilExtension
     /// <param name="type"></param>
     /// <returns></returns>
     /// 
-    public static UIPanel SearchPanelForType(this List<UIPanel> list, eUIPanelType type)
+    public static UIPanelJson SearchPanelForType(this List<UIPanelJson> list, eUIPanelType type)
     {
         foreach (var item in list)
         {
