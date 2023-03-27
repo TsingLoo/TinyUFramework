@@ -34,10 +34,12 @@ public class ConfirmPopupPanel : BasePanel
     public override void OnEnter()
     {
         base.OnEnter();
+        MainController.Instance.isShowingPopup= true;
 
         ConfirmPopupParam param = (ConfirmPopupParam)base.panelParams;
         lb_title.text = param.title;
         lb_message.text = param.msg;
+        lb_message.color = param.msgColor;
         lb_confirmButton.text = param.confirmText;
         lb_cancelButton.text = param.cancelText;
         this.confirmMethod = param.confirmMethod;
@@ -49,8 +51,9 @@ public class ConfirmPopupPanel : BasePanel
 
     public void OnConfirm()
     {
-        confirmMethod?.Invoke();
+        Debug.Log($"[{nameof(ConfirmPopupPanel)}]Confirm is pressed");
         PanelManager.Instance.PopPanel();
+        confirmMethod?.Invoke();
     }
 
     public void OnCancelMethod()
@@ -62,6 +65,7 @@ public class ConfirmPopupPanel : BasePanel
     public override void OnExit()
     {
         base.OnExit();
+        MainController.Instance.isShowingPopup = false;
         btn_confirm.onClick.RemoveAllListeners();
         btn_cancel.onClick.RemoveAllListeners();
     }

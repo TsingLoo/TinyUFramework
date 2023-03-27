@@ -168,6 +168,19 @@ public class PanelManager : Singleton<PanelManager>
         }
     }
 
+    public BasePanel GetTopPanel() 
+    {
+        if (panelStack == null || panelStack.Count <= 0)
+        {
+            Debug.Log($"[{nameof(PanelManager)}]There is no panel in stack");
+            return null;
+        }
+        else
+        {
+            return panelStack.Peek();
+        }
+    }
+
 
     public BasePanel GetPanel(eUIPanelType type)
     {
@@ -255,8 +268,8 @@ public class PanelManager : Singleton<PanelManager>
         //若为空，直接退出方法
         //若不为空，则把新的栈顶Panel状态设为继续(OnResume)
         if (panelStack.Count <= 0) return;
-
         BasePanel topPanel2 = panelStack.Peek();
+        Debug.Log($"[{nameof(PanelManager)}]The current top is : {topPanel2.name}");
         topPanel2.OnResume();
     }
 

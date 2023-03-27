@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,6 +10,23 @@ using static UnityEngine.Rendering.DebugUI;
 
 public static class UtilExtension
 {
+    public static string FixedLengthString(int value , int length = 2)
+    {
+        return value.ToString().PadLeft(length, '0');
+    }
+
+#if false
+    public static void HighlightElement(this TMP_Text element, Color highlightColor)
+    {
+        Color previousColor = new Color(element.color.r, element.color.g, element.color.b, element.color.a);
+        //Color previousColor = element.color;
+        Tweener OutT = element.DOColor(previousColor, 0.7f).SetId($"{element.transform.name}{highlightColor}OUT").SetAutoKill(false);
+        element.DOColor(highlightColor, 1f).SetId($"{element.transform.name}{highlightColor}IN").SetAutoKill(false).OnComplete(() => {
+            OutT.Play();
+        });
+    }
+#endif
+
     public static TValue TryGetValue<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key)
     {
         /// <summary>

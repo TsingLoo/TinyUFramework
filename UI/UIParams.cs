@@ -23,6 +23,7 @@ public class ConfirmPopupParam : PanelParams
 {
     public string title;
     public string msg;
+    public Color msgColor;
     public string confirmText;
     public string cancelText;
     public bool hasCancel;
@@ -38,15 +39,27 @@ public class ConfirmPopupParam : PanelParams
     /// <param name="cancelText">取消按钮（左起第二个按键）的文本（默认为空）,若为空，则没有取消按钮</param>
     /// <param name="confirmMethod">点按确认按键会调用的方法</param>
     /// <param name="cancelMethod">点按取消按键会调用的方法（默认为空）</param>
-    public ConfirmPopupParam(string title, string msg, string confirmText, string cancelText = null, UnityAction confirmMethod = null, UnityAction cancelMethod = null)
+    public ConfirmPopupParam(string title, string msg ,Color msgColor,  string confirmText, string cancelText = null, UnityAction confirmMethod = null, UnityAction cancelMethod = null)
     {
         this.title = title;
         this.msg = msg;
+        this.msgColor = msgColor;
         this.confirmText = confirmText;
         this.cancelText = cancelText;
         this.hasCancel = !String.IsNullOrEmpty(cancelText);
         this.confirmMethod = confirmMethod;
         this.cancelMethod = cancelMethod;
+    }
 
+    public ConfirmPopupParam(string title, string msg, string confirmText, string cancelText = null, UnityAction confirmMethod = null, UnityAction cancelMethod = null)
+    {
+        this.title = title;
+        this.msg = msg;
+        this.msgColor = Color.black;
+        this.confirmText = confirmText;
+        this.cancelText = cancelText;
+        this.hasCancel = !String.IsNullOrEmpty(cancelText);
+        this.confirmMethod = confirmMethod;
+        this.cancelMethod = cancelMethod;
     }
 }
