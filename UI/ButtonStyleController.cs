@@ -1,14 +1,15 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Button))]
-public class ButtonStyleController : MonoBehaviour
+public class ButtonStyleController : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler
 {
 
     Color NormalColor = SaveDataManager.ThemeColor_G_Normal;
     Color HighlightColor = SaveDataManager.ThemeColor_G_Highlight;
-
-    private void Start()
+     
+    void OnEnable()
     {
         ChangeBtnStyle();      
     }
@@ -20,16 +21,25 @@ public class ButtonStyleController : MonoBehaviour
         ColorBlock styleCB = rawCB;
         if (rawCB.normalColor == ColorBlock.defaultColorBlock.normalColor)
         {
+            Debug.Log($"[{nameof(ButtonStyleController)}]'s style has been changed");
             styleCB.normalColor = NormalColor;
         }
-
 
         if (rawCB.highlightedColor == ColorBlock.defaultColorBlock.highlightedColor)
         { 
             styleCB.highlightedColor = HighlightColor;
         }
 
-
         btn.colors = styleCB;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        SoundLoaderManager.Instance.AddFxSound(PrefabLoader.Instance.buttonEnter);
+    }
+
+    public void OnPointerClick (PointerEventData eventData)
+    {
+        SoundLoaderManager.Instance.AddFxSound(PrefabLoader.Instance.buttonClick);
     }
 }
