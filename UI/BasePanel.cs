@@ -1,10 +1,9 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class BasePanel : MonoBehaviour
 {
     public eUIPanelType panelType;
-    private CanvasGroup canvasGroup;
+    protected CanvasGroup canvasGroup;
     protected IPanelParams panelParams;
 
     public void Awake()

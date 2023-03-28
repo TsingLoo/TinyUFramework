@@ -11,7 +11,10 @@ public enum eUIPanelType
     StartMenu,
     PauseMenu,
     LoadingPanel,
-    ConfigPanel
+    ConfigPanel,
+    HUDPanel,
+    HelpPanel,
+    AboutPanel
 }
 
 public class UIPanelJson

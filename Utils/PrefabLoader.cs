@@ -46,4 +46,21 @@ public class PrefabLoader : SingletonForMonobehaviour<PrefabLoader>
 
     #endregion
 
+    #region Audio
+    [Header("Audio")]
+    public AudioClip error;
+    public AudioClip bgm;
+    public AudioClip wasted;
+    public AudioClip buttonClick;
+    public AudioClip buttonEnter;
+    public AudioClip scoreUp;
+    public AudioClip IPDPlaced;
+    public AudioClip RemoveIPG;
+    public AudioClip HitObject;
+    public AudioClip HitD;
+    public AudioClip IPDSpawn;
+    public AudioClip Won;
+    public AudioClip Pause;
+    public AudioClip Resume;
+    #endregion
 }
