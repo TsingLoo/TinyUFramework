@@ -9,12 +9,10 @@ public class PauseMenu : BasePanel
     [SerializeField] GameObject AudioControlPanel;   
     [SerializeField] GameObject ResumeBtn;
     [SerializeField] GameObject RestartBtn;
-
+    [SerializeField] GameObject HomeBtn;
+ 
     [SerializeField] Image BackgroundImg;
 
-    private void OnEnable()
-    {
-    }
 
     public override void OnEnter()
     {
@@ -38,6 +36,16 @@ public class PauseMenu : BasePanel
         //MainController.Instance.resumeGame += ResumeHandler;
         ResumeBtn.GetComponent<Button>().onClick.AddListener(()=> { MainController.Instance.ResumeGame();});
         RestartBtn.GetComponent<Button>().onClick.AddListener(() => { MainController.Instance.RestartGame();});
+        HomeBtn.GetComponent<Button>().onClick.AddListener(() => {
+            PanelManager.Instance.PopPanel();
+            if (PanelManager.Instance.GetTopPanel().GetPanelType() == eUIPanelType.HUDPanel)
+            {
+                PanelManager.Instance.PopPanel();
+                MainController.Instance.ExitPlay();
+            }
+            DOTween.Kill("StartToRespawnIPD");
+            PanelManager.Instance.OpenPanel(eUIPanelType.StartMenu);
+        });
         //StartBtn.GetComponent<Button>().onClick.AddListener(OnClickStart);
         //HelpBtn.GetComponent<Button>().onClick.AddListener(MainController.Instance.OnClickHelp);
         //QuitBtn.GetComponent<Button>().onClick.AddListener(MainController.Instance.OnClickQuit);
@@ -47,6 +55,7 @@ public class PauseMenu : BasePanel
     {
         ResumeBtn.GetComponent<Button>().onClick.RemoveAllListeners();
         RestartBtn.GetComponent<Button>().onClick.RemoveAllListeners();
+        HomeBtn.GetComponent<Button>().onClick.RemoveAllListeners();
         //MainController.Instance.resumeGame -= ResumeHandler;
         //StartBtn.GetComponent<Button>().onClick.RemoveAllListeners();
         //HelpBtn.GetComponent<Button>().onClick.RemoveAllListeners();

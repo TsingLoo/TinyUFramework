@@ -48,6 +48,7 @@ public class PrefabLoader : SingletonForMonobehaviour<PrefabLoader>
 
     #region Audio
     [Header("Audio")]
+    public AudioClip error;
     public AudioClip bgm;
     public AudioClip wasted;
     public AudioClip buttonClick;
