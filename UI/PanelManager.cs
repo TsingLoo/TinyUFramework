@@ -1,9 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
-using LitJson;
 using System.IO;
 using System;
 using DG.Tweening;
+#if false
+using LitJson;
+#endif
+
+
 
 
 public class PanelManager : Singleton<PanelManager>
@@ -45,6 +49,7 @@ public class PanelManager : Singleton<PanelManager>
 
     }
 
+#if false
     public List<UIPanelJson> ReadJsonFile(string jsonPath)
     {
         //如果找不到UIJson文件，则新建一个Json文件并写入“[]”
@@ -111,7 +116,7 @@ public class PanelManager : Singleton<PanelManager>
         //AssetDatabase.Refresh();
         Debug.Log("[PanelManager]结束更新ALLPanelList");
     }
-
+#endif
     private void GetPanelDictFromPrefabLoader() 
     {
         panelDict = PrefabLoader.Instance.GetPanelDict();

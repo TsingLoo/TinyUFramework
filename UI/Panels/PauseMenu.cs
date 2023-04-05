@@ -34,14 +34,14 @@ public class PauseMenu : BasePanel
     void BindBtns()
     {
         //MainController.Instance.resumeGame += ResumeHandler;
-        ResumeBtn.GetComponent<Button>().onClick.AddListener(()=> { MainController.Instance.ResumeGame();});
-        RestartBtn.GetComponent<Button>().onClick.AddListener(() => { MainController.Instance.RestartGame();});
+        //ResumeBtn.GetComponent<Button>().onClick.AddListener(()=> { MainController.Instance.ResumeGame();});
+        //RestartBtn.GetComponent<Button>().onClick.AddListener(() => { MainController.Instance.RestartGame();});
         HomeBtn.GetComponent<Button>().onClick.AddListener(() => {
             PanelManager.Instance.PopPanel();
             if (PanelManager.Instance.GetTopPanel().GetPanelType() == eUIPanelType.HUDPanel)
             {
                 PanelManager.Instance.PopPanel();
-                MainController.Instance.ExitPlay();
+                //MainController.Instance.ExitPlay();
             }
             DOTween.Kill("StartToRespawnIPD");
             PanelManager.Instance.OpenPanel(eUIPanelType.StartMenu);

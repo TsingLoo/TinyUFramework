@@ -34,7 +34,7 @@ public class ConfirmPopupPanel : BasePanel
     public override void OnEnter()
     {
         base.OnEnter();
-        MainController.Instance.isShowingPopup= true;
+        //MainController.Instance.isShowingPopup= true;
 
         ConfirmPopupParam param = (ConfirmPopupParam)base.panelParams;
         lb_title.text = param.title;
@@ -65,7 +65,7 @@ public class ConfirmPopupPanel : BasePanel
     public override void OnExit()
     {
         base.OnExit();
-        MainController.Instance.isShowingPopup = false;
+        //MainController.Instance.isShowingPopup = false;
         btn_confirm.onClick.RemoveAllListeners();
         btn_cancel.onClick.RemoveAllListeners();
     }
