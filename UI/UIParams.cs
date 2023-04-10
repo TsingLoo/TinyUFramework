@@ -4,62 +4,64 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-/// <summary>
-/// Base interface for all the UI params
-/// </summary>
-public interface IUIParams { }
-
-public interface IPanelParams : IUIParams
-{
-
-}
-
-public class PanelParams : IPanelParams
-{
-
-}
-
-public class ConfirmPopupParam : PanelParams
-{
-    public string title;
-    public string msg;
-    public Color msgColor;
-    public string confirmText;
-    public string cancelText;
-    public bool hasCancel;
-    public UnityAction confirmMethod;
-    public UnityAction cancelMethod;
-
-    /// <summary>
-    /// È·ÈÏ´°¿Ú²ÎÊýµÄ¹¹Ôì·½·¨¡£
-    /// </summary>
-    /// <param name="title">±êÌâ</param>
-    /// <param name="msg">ÎÄ±¾ÄÚÈÝ</param>
-    /// <param name="confirmText">È·ÈÏ°´Å¥£¨×óÆðµÚÒ»¸ö°´¼ü£©µÄÎÄ±¾</param>
-    /// <param name="cancelText">È¡Ïû°´Å¥£¨×óÆðµÚ¶þ¸ö°´¼ü£©µÄÎÄ±¾£¨Ä¬ÈÏÎª¿Õ£©,ÈôÎª¿Õ£¬ÔòÃ»ÓÐÈ¡Ïû°´Å¥</param>
-    /// <param name="confirmMethod">µã°´È·ÈÏ°´¼ü»áµ÷ÓÃµÄ·½·¨</param>
-    /// <param name="cancelMethod">µã°´È¡Ïû°´¼ü»áµ÷ÓÃµÄ·½·¨£¨Ä¬ÈÏÎª¿Õ£©</param>
-    public ConfirmPopupParam(string title, string msg ,Color msgColor,  string confirmText, string cancelText = null, UnityAction confirmMethod = null, UnityAction cancelMethod = null)
-    {
-        this.title = title;
-        this.msg = msg;
-        this.msgColor = msgColor;
-        this.confirmText = confirmText;
-        this.cancelText = cancelText;
-        this.hasCancel = !String.IsNullOrEmpty(cancelText);
-        this.confirmMethod = confirmMethod;
-        this.cancelMethod = cancelMethod;
-    }
-
-    public ConfirmPopupParam(string title, string msg, string confirmText, string cancelText = null, UnityAction confirmMethod = null, UnityAction cancelMethod = null)
-    {
-        this.title = title;
-        this.msg = msg;
-        this.msgColor = Color.black;
-        this.confirmText = confirmText;
-        this.cancelText = cancelText;
-        this.hasCancel = !String.IsNullOrEmpty(cancelText);
-        this.confirmMethod = confirmMethod;
-        this.cancelMethod = cancelMethod;
-    }
+ namespace TinyUFramework {	
+	/// <summary>
+	/// Base interface for all the UI params
+	/// </summary>
+	public interface IUIParams { }
+	
+	public interface IPanelParams : IUIParams
+	{
+	
+	}
+	
+	public class PanelParams : IPanelParams
+	{
+	
+	}
+	
+	public class ConfirmPopupParam : PanelParams
+	{
+	    public string title;
+	    public string msg;
+	    public Color msgColor;
+	    public string confirmText;
+	    public string cancelText;
+	    public bool hasCancel;
+	    public UnityAction confirmMethod;
+	    public UnityAction cancelMethod;
+	
+	    /// <summary>
+	    /// È·ï¿½Ï´ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ì·½ï¿½ï¿½ï¿½ï¿½
+	    /// </summary>
+	    /// <param name="title">ï¿½ï¿½ï¿½ï¿½</param>
+	    /// <param name="msg">ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½</param>
+	    /// <param name="confirmText">È·ï¿½Ï°ï¿½Å¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½</param>
+	    /// <param name="cancelText">È¡ï¿½ï¿½ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½Îªï¿½Õ£ï¿½,ï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ï¿½Ã»ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Å¥</param>
+	    /// <param name="confirmMethod">ï¿½ã°´È·ï¿½Ï°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÃµÄ·ï¿½ï¿½ï¿½</param>
+	    /// <param name="cancelMethod">ï¿½ã°´È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÃµÄ·ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½Îªï¿½Õ£ï¿½</param>
+	    public ConfirmPopupParam(string title, string msg ,Color msgColor,  string confirmText, string cancelText = null, UnityAction confirmMethod = null, UnityAction cancelMethod = null)
+	    {
+	        this.title = title;
+	        this.msg = msg;
+	        this.msgColor = msgColor;
+	        this.confirmText = confirmText;
+	        this.cancelText = cancelText;
+	        this.hasCancel = !String.IsNullOrEmpty(cancelText);
+	        this.confirmMethod = confirmMethod;
+	        this.cancelMethod = cancelMethod;
+	    }
+	
+	    public ConfirmPopupParam(string title, string msg, string confirmText, string cancelText = null, UnityAction confirmMethod = null, UnityAction cancelMethod = null)
+	    {
+	        this.title = title;
+	        this.msg = msg;
+	        this.msgColor = Color.black;
+	        this.confirmText = confirmText;
+	        this.cancelText = cancelText;
+	        this.hasCancel = !String.IsNullOrEmpty(cancelText);
+	        this.confirmMethod = confirmMethod;
+	        this.cancelMethod = cancelMethod;
+	    }
+	}
 }

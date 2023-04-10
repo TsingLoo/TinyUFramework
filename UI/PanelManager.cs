@@ -7,294 +7,293 @@ using DG.Tweening;
 using LitJson;
 #endif
 
-
-
-
-public class PanelManager : Singleton<PanelManager>
-{
-    public const int LEFT_HIDE_VALUE = -1500;
-
-    //Unity Editor£º<path to project folder>/Assets
-    readonly string panelPrefabPath = Application.dataPath + @"/Bundles/Resources/Prefabs/UI/Panel/";
-    readonly string jsonPath = Application.dataPath + @"/Bundles/Resources/Json/UIJson.json";
-
-    /// <summary>
-    /// ¼ÇÂ¼ÁËËùÓÐUIPanelÀàµÄÁÐ±í
-    /// </summary>
-    private List<UIPanelJson> AllPanelList;
-    //¿ª·¢Ò»¸ö¸ø³öÃæ°åÀàÐÍ£¬¾ÍÊµÀý»¯¸ÃÃæ°å£¬²¢·µ»ØÃæ°åÉÏ¹ÒÔØµÄBasePanel×é¼þµÄ·½·¨
-    private Dictionary<eUIPanelType, BasePanel> panelDict;
-    //Ê¹ÓÃÕ»À´´æ´¢µ±Ç°³¡¾°ÖÐÕýÔÚÏÔÊ¾µÄPanel
-    private Stack<BasePanel> panelStack;
-
-    private Transform canvasTransform;
-    public Transform CanvasTransform
-    {
-        get
-        {
-            if (canvasTransform == null)
-                //Í¨¹ýÃû³Æ»ñÈ¡CanvasÉÏµÄTransform£¬ËùÒÔ²»ÒªÓÐÍ¬ÃûCanvas
-                canvasTransform = GameObject.Find("MainCanvas").transform;
-            return canvasTransform;
-        }
-    }
-
-
-    public void InitPanelManager() 
-    {
+ namespace TinyUFramework {	
+	public class PanelManager : Singleton<PanelManager>
+	{
+	    public const int LEFT_HIDE_VALUE = -1500;
+	
+	    //Unity Editorï¿½ï¿½<path to project folder>/Assets
+	    readonly string panelPrefabPath = Application.dataPath + @"/Bundles/Resources/Prefabs/UI/Panel/";
+	    readonly string jsonPath = Application.dataPath + @"/Bundles/Resources/Json/UIJson.json";
+	
+	    /// <summary>
+	    /// ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½UIPanelï¿½ï¿½ï¿½ï¿½Ð±ï¿½
+	    /// </summary>
+	    private List<UIPanelJson> AllPanelList;
+	    //ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¹ï¿½ï¿½Øµï¿½BasePanelï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½
+	    private Dictionary<eUIPanelType, BasePanel> panelDict;
+	    //Ê¹ï¿½ï¿½Õ»ï¿½ï¿½ï¿½æ´¢ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Panel
+	    private Stack<BasePanel> panelStack;
+	
+	    private Transform canvasTransform;
+	    public Transform CanvasTransform
+	    {
+	        get
+	        {
+	            if (canvasTransform == null)
+	                //Í¨ï¿½ï¿½ï¿½ï¿½ï¿½Æ»ï¿½È¡Canvasï¿½Ïµï¿½Transformï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½Òªï¿½ï¿½Í¬ï¿½ï¿½Canvas
+	                canvasTransform = GameObject.Find("MainCanvas").transform;
+	            return canvasTransform;
+	        }
+	    }
+	
+	
+	    public void InitPanelManager() 
+	    {
 #if false
-        RefreshUIPanelInfoJson();
+	        RefreshUIPanelInfoJson();
 #endif
-        GetPanelDictFromPrefabLoader();
-
-    }
-
+	        GetPanelDictFromPrefabLoader();
+	
+	    }
+	
 #if false
-    public List<UIPanelJson> ReadJsonFile(string jsonPath)
-    {
-        //Èç¹ûÕÒ²»µ½UIJsonÎÄ¼þ£¬ÔòÐÂ½¨Ò»¸öJsonÎÄ¼þ²¢Ð´Èë¡°[]¡±
-        //Èç¹û½öÐÂ½¨Ò»¸ö¿ÕJsonÎÄ¼þ£¬Json×ª»»»á·µ»ØÒ»¸önull£¬Ò²¾ÍÊÇºóÃæµÄlistµÈÓÚnull£¬Ö®ºóÊ¹ÓÃlistµÄ²Ù×÷¾Í»á±¨Ò»¸ö¿ÕÖ¸Õë´íÎó¡£
-        if (!File.Exists(jsonPath))
-        {
-            Debug.Log("[PanelManager]ÕÒ²»µ½" + jsonPath + "ÎÄ¼þ");
-            File.WriteAllText(jsonPath, "[]");
-        }
-        List<UIPanelJson> list = JsonMapper.ToObject<List<UIPanelJson>>(File.ReadAllText(jsonPath));
-
-        return list;
-    }
-
-    //½«UIPanelÁÐ±íÄÚÈÝÐ´µ½JsonÎÄ¼þÖÐ
-    public void WriteJsonFile(string jsonPath, List<UIPanelJson> list)
-    {
-        string json = JsonMapper.ToJson(list);
-        File.WriteAllText(jsonPath, json);
-    }
-
-    /// <summary>
-    /// ÀûÓÃ´Ë·½·¨×Ô¶¯×¢²á¡¢¸üÐÂÃæ°åµÄÔ¤ÖÆÌå¡£
-    /// </summary>
-    public void RefreshUIPanelInfoJson()
-    {
-        Debug.Log("[PanelManager]¿ªÊ¼¸üÐÂALLPanelList");
-        AllPanelList = ReadJsonFile(jsonPath);
-        //¶ÁÈ¡´æ´¢Ãæ°åprefebµÄÎÄ¼þ¼ÐµÄÐÅÏ¢
-        DirectoryInfo folder = new DirectoryInfo(panelPrefabPath);
-
-        //±éÀú´¢´æÃæ°åprefabµÄÎÄ¼þ¼ÐÀïÃ¿Ò»¸öprefabµÄÃû×Ö£¬²¢°ÑÃû×Ö×ª»»Îª¶ÔÓ¦µÄeUIPanelTypeÖÐµÄÃ¶¾Ù£¨Ò»ÖÖ×¢²áµÄ°ì·¨£©
-        //ÔÙ¼ì²éUIPanelTypeÊÇ·ñ´æÔÚ ÓÚListÀï,Èô´æÔÚListÀïÔò¸üÐÂpath,Èô²»´æÔÚListÀïÔò¼ÓÉÏ
-        foreach (FileInfo file in folder.GetFiles("*.prefab"))
-        {
-            //Debug.Log("[UIManager]The fileinfo is " + file);
-            //Õâ¸öÔ¤ÖÆÌåµÄeUIPanelTypeÊÇ£¨Ó¦µ±ºÍÔ¤ÖÆÌåµÄÃû³ÆÏàÍ³Ò»£¬Path¼´Type£©
-            eUIPanelType type = (eUIPanelType)Enum.Parse(typeof(eUIPanelType), file.Name.Replace(".prefab", ""));
-            //Debug.Log("[UIManager]Õâ¸öÔ¤ÖÆÌåµÄtypeÊÇ " + type);
-            string path = @"Prefabs/UI/Panel/" + file.Name.Replace(".prefab", "");
-            //string path = panelPrefabPath + file.Name;
-            //string path = @"Prefabs/UI/Panel/" + file.Name;
-
-            UIPanelJson uIPanel = AllPanelList.SearchPanelForType(type);
-
-            if (uIPanel != null)//UIPanelÔÚ¸ÃListÖÐ,¸üÐÂpathÖµ
-            {
-                Debug.Log("[PanelManager]" + type + "ÔÚListÖÐ£¬¸üÐÂpathÖµ: " + path);
-                uIPanel.UIPanelPath = path;
-            }
-            else
-            {
-                Debug.Log("[PanelManager]" + type + "²»ÔÚListÖÐ£¬Ìí¼ÓpathÖµ: " + path);
-                UIPanelJson panel = new UIPanelJson
-                {
-                    UIPanelType = type,
-                    UIPanelPath = path
-                };
-                AllPanelList.Add(panel);
-            }
-        }
-
-        WriteJsonFile(jsonPath, AllPanelList);
-        //AssetDatabase.Refresh();
-        Debug.Log("[PanelManager]½áÊø¸üÐÂALLPanelList");
-    }
+	    public List<UIPanelJson> ReadJsonFile(string jsonPath)
+	    {
+	        //ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½UIJsonï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â½ï¿½Ò»ï¿½ï¿½Jsonï¿½Ä¼ï¿½ï¿½ï¿½Ð´ï¿½ë¡°[]ï¿½ï¿½
+	        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Jsonï¿½Ä¼ï¿½ï¿½ï¿½Json×ªï¿½ï¿½ï¿½á·µï¿½ï¿½Ò»ï¿½ï¿½nullï¿½ï¿½Ò²ï¿½ï¿½ï¿½Çºï¿½ï¿½ï¿½ï¿½listï¿½ï¿½ï¿½ï¿½nullï¿½ï¿½Ö®ï¿½ï¿½Ê¹ï¿½ï¿½listï¿½Ä²ï¿½ï¿½ï¿½ï¿½Í»á±¨Ò»ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½
+	        if (!File.Exists(jsonPath))
+	        {
+	            Debug.Log("[PanelManager]ï¿½Ò²ï¿½ï¿½ï¿½" + jsonPath + "ï¿½Ä¼ï¿½");
+	            File.WriteAllText(jsonPath, "[]");
+	        }
+	        List<UIPanelJson> list = JsonMapper.ToObject<List<UIPanelJson>>(File.ReadAllText(jsonPath));
+	
+	        return list;
+	    }
+	
+	    //ï¿½ï¿½UIPanelï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½Jsonï¿½Ä¼ï¿½ï¿½ï¿½
+	    public void WriteJsonFile(string jsonPath, List<UIPanelJson> list)
+	    {
+	        string json = JsonMapper.ToJson(list);
+	        File.WriteAllText(jsonPath, json);
+	    }
+	
+	    /// <summary>
+	    /// ï¿½ï¿½ï¿½Ã´Ë·ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½×¢ï¿½á¡¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½å¡£
+	    /// </summary>
+	    public void RefreshUIPanelInfoJson()
+	    {
+	        Debug.Log("[PanelManager]ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ALLPanelList");
+	        AllPanelList = ReadJsonFile(jsonPath);
+	        //ï¿½ï¿½È¡ï¿½æ´¢ï¿½ï¿½ï¿½prefebï¿½ï¿½ï¿½Ä¼ï¿½ï¿½Ðµï¿½ï¿½ï¿½Ï¢
+	        DirectoryInfo folder = new DirectoryInfo(panelPrefabPath);
+	
+	        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½prefabï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿Ò»ï¿½ï¿½prefabï¿½ï¿½ï¿½ï¿½ï¿½Ö£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½Ó¦ï¿½ï¿½eUIPanelTypeï¿½Ðµï¿½Ã¶ï¿½Ù£ï¿½Ò»ï¿½ï¿½×¢ï¿½ï¿½Ä°ì·¨ï¿½ï¿½
+	        //ï¿½Ù¼ï¿½ï¿½UIPanelTypeï¿½Ç·ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Listï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Listï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½path,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Listï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	        foreach (FileInfo file in folder.GetFiles("*.prefab"))
+	        {
+	            //Debug.Log("[UIManager]The fileinfo is " + file);
+	            //ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½eUIPanelTypeï¿½Ç£ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í³Ò»ï¿½ï¿½Pathï¿½ï¿½Typeï¿½ï¿½
+	            eUIPanelType type = (eUIPanelType)Enum.Parse(typeof(eUIPanelType), file.Name.Replace(".prefab", ""));
+	            //Debug.Log("[UIManager]ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½typeï¿½ï¿½ " + type);
+	            string path = @"Prefabs/UI/Panel/" + file.Name.Replace(".prefab", "");
+	            //string path = panelPrefabPath + file.Name;
+	            //string path = @"Prefabs/UI/Panel/" + file.Name;
+	
+	            UIPanelJson uIPanel = AllPanelList.SearchPanelForType(type);
+	
+	            if (uIPanel != null)//UIPanelï¿½Ú¸ï¿½Listï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½pathÖµ
+	            {
+	                Debug.Log("[PanelManager]" + type + "ï¿½ï¿½Listï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½pathÖµ: " + path);
+	                uIPanel.UIPanelPath = path;
+	            }
+	            else
+	            {
+	                Debug.Log("[PanelManager]" + type + "ï¿½ï¿½ï¿½ï¿½Listï¿½Ð£ï¿½ï¿½ï¿½ï¿½pathÖµ: " + path);
+	                UIPanelJson panel = new UIPanelJson
+	                {
+	                    UIPanelType = type,
+	                    UIPanelPath = path
+	                };
+	                AllPanelList.Add(panel);
+	            }
+	        }
+	
+	        WriteJsonFile(jsonPath, AllPanelList);
+	        //AssetDatabase.Refresh();
+	        Debug.Log("[PanelManager]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ALLPanelList");
+	    }
 #endif
-    private void GetPanelDictFromPrefabLoader() 
-    {
-        panelDict = PrefabLoader.Instance.GetPanelDict();
-    }
-
-    ///<summary>
-    ///µ÷ÓÃ´Ë·½·¨´ò¿ªÏà¹ØÃæ°å£¬²»´«²Î
-    ///<summary>
-    /// <param name="type"></param>
-    public void OpenPanel(eUIPanelType type)
-    {
-        Debug.Log("[PanelManager]" + type + " is opened");
-        PushPanel(type);
-    }
-
-    /// <summary>
-    /// µ÷ÓÃ´Ë·½·¨´ò¿ªÏà¹ØÃæ°å,´«µÝ²ÎÊý
-    /// </summary>
-    /// <param name="type"></param>
-    public void OpenPanel<T>(eUIPanelType type, T param = default(T)) where T : IPanelParams
-    {
-        Debug.Log("[PanelManager]" + type + " is opened");
-        BasePanel panel = GetPanel(type);
-        panel.SetPanelParam(param);
-        PushPanel(type);
-    }
-
-    public void StartLoading()
-    {
-        Debug.Log("[PanelManager]Begin to load");
-        OpenPanel(eUIPanelType.LoadingPanel);
-        foreach (BasePanel bp in panelStack)
-        {
-            bp.gameObject.GetComponent<CanvasGroup>().interactable = false;
-        }
-    }
-
-    public void FinishLoading()
-    {
-        PopPanel();
-        if (panelStack == null)
-        {
-            return;
-        }
-        //Debug.Log("[UIManager]Finish loading: " + panelStack.Count);
-        foreach (BasePanel bp in panelStack)
-        {
-            if (bp.gameObject.TryGetComponent<LoadingPanel>(out LoadingPanel lp))
-            {
-
-            }
-            Debug.Log(bp.gameObject.name);
-            bp.gameObject.GetComponent<CanvasGroup>().interactable = true;
-        }
-    }
-
-    public BasePanel GetTopPanel() 
-    {
-        if (panelStack == null || panelStack.Count <= 0)
-        {
-            Debug.Log($"[{nameof(PanelManager)}]There is no panel in stack");
-            return null;
-        }
-        else
-        {
-            return panelStack.Peek();
-        }
-    }
-
-
-    public BasePanel GetPanel(eUIPanelType type)
-    {
-        if (panelDict == null)
-        {
-            panelDict = new Dictionary<eUIPanelType, BasePanel>();
-            Debug.Log($"[PanelManager]Failed to find {nameof(panelDict)}, create one");
-        }
-        //¡¾À©Õ¹·½·¨¡¿Í¨¹ýtype²éÕÒ×ÖµäÀï¶ÔÓ¦µÄBasePanel£¬ÈôÕÒ²»µ½Ôò·µ»Ønull£¬¾ßÌå¼ûExtension²¿·Ö
-        BasePanel panel = panelDict.TryGetValue(type);
-
-        //ÔÚÏÖÓÐ×ÖµäÀïÃ»ÓÐÕÒµ½
-        //Ö»ÄÜÈ¥jsonÀïÕÒtype¶ÔÓ¦µÄprefabµÄÂ·¾¶²¢¼ÓÔØ
-        //ÔÙ¼Ó½ø×ÖµäÀïÒÔ±ãÏÂ´ÎÔÚ×ÖµäÖÐ²éÕÒ
-        if (panel == null)
-        {
-            //¡¾À©Õ¹·½·¨¡¿Í¨¹ýType²éÕÒÁÐ±íÀï¶ÔÓ¦µÄUIPanel£¬ÈôÕÒ²»µ½Ôò·µ»Ønull£¬¾ßÌå¼ûExtension²¿·Ö
-            string path = AllPanelList.SearchPanelForType(type).UIPanelPath;
-            if (path == null)
-                throw new Exception("[PanelManager]ÕÒ²»µ½¸ÃUIPanelTypeµÄPrefab");
-
-            if (Resources.Load(path) == null)
-                throw new Exception("[PanelManager]ÕÒ²»µ½¸ÃPath(" + path + ")µÄPrefab");
-            //ÊµÀý»¯prefab
-            GameObject instPanel = GameObject.Instantiate(Resources.Load(path)) as GameObject;
-            //°ÑÃæ°åÉèÎªCanvasµÄ×ÓÎïÌå£¬false±íÊ¾²»±£³ÖworldPosition£¬¶øÊÇ¸ù¾ÝCanvasµÄ×ø±êÉè¶¨localPosition
-            instPanel.transform.SetParent(CanvasTransform, false);
-
-            panelDict.Add(type, instPanel.GetComponent<BasePanel>());
-
-            return instPanel.GetComponent<BasePanel>();
-        }
-
-        return panel;
-    }
-
-    //°ÑÖ¸¶¨ÀàÐÍµÄpanelÈëÕ»,²¢ÏÔÊ¾ÔÚ³¡¾°ÖÐ
-    public void PushPanel(eUIPanelType type)
-    {
-        if (panelStack == null)
-            panelStack = new Stack<BasePanel>();
-        //ÅÐ¶ÏÕ»ÀïÊÇ·ñÓÐÆäËûpanel,ÈôÓÐ,Ôò°ÑÔ­Õ»¶¥panelÉè¶¨Æä×´Ì¬ÎªÔÝÍ£(OnPause)
-        if (panelStack.Count > 0)
-        {
-            BasePanel topPanel = panelStack.Peek();
-            topPanel.OnPause();
-        }
-
-
-        BasePanel panel = GetPanel(type);
-        panel.gameObject.SetActive(true);
-        //°ÑÖ¸¶¨ÀàÐÍµÄpanelÈëÕ»²¢Éè¶¨Æä×´Ì¬Îª½øÈë³¡¾°(OnEnter)
-        panelStack.Push(panel);
-
-
-        if (panel == null)
-        {
-            Debug.LogWarning("[PanelManager]" + type + " Î´¹ÒÔØ×é¼þ " + typeof(BasePanel));
-            return;
-        }
-        panel.OnEnter();
-    }
-
-    //°ÑÕ»¶¥panel³öÕ»,²¢´Ó³¡¾°ÖÐÏûÊ§
-    public void PopPanel()
-    {
-        if (panelStack == null)
-            panelStack = new Stack<BasePanel>();
-
-        //¼ì²éÕ»ÊÇ·ñÎª¿Õ£¬ÈôÎª¿ÕÔòÖ±½ÓÍË³ö·½·¨
-        if (panelStack.Count <= 0) return;
-
-        //foreach (var e in panelStack)
-        //{
-        //    Debug.Log(e.transform.name);
-        //}
-
-
-        //°ÑÕ»¶¥panel³öÕ»£¬²¢°Ñ¸Ãpanel×´Ì¬ÉèÎªÍË³ö³¡¾°(OnExit)
-        BasePanel topPanel = panelStack.Pop();
-        Debug.Log("[PanelManager]" + topPanel.GetPanelType() + " is now popped");
-        topPanel.OnExit();
-
-        //ÔÙ´Î¼ì²é³öÕ»Õ»¶¥PanelºóÕ»ÊÇ·ñÎª¿Õ
-        //ÈôÎª¿Õ£¬Ö±½ÓÍË³ö·½·¨
-        //Èô²»Îª¿Õ£¬Ôò°ÑÐÂµÄÕ»¶¥Panel×´Ì¬ÉèÎª¼ÌÐø(OnResume)
-        if (panelStack.Count <= 0) return;
-        BasePanel topPanel2 = panelStack.Peek();
-        Debug.Log($"[{nameof(PanelManager)}]The current top is : {topPanel2.name}");
-        topPanel2.OnResume();
-    }
-
-    public static void tweenHideGameObject(GameObject go, eDirection direction, float targetXvalue = LEFT_HIDE_VALUE)
-    {
-        switch ((int)direction)
-        {
-            case (int)eDirection.LEFT:
-                go.transform.DOMoveX(targetXvalue, 1f).SetEase(Ease.InOutCirc);
-                break;
-        }
-
-
-    }
-}
-
-public enum eDirection
-{
-    UP = 0,
-    DOWN,
-    LEFT,
-    RIGHT
+	    private void GetPanelDictFromPrefabLoader() 
+	    {
+	        panelDict = PrefabLoader.Instance.GetPanelDict();
+	    }
+	
+	    ///<summary>
+	    ///ï¿½ï¿½ï¿½Ã´Ë·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	    ///<summary>
+	    /// <param name="type"></param>
+	    public void OpenPanel(eUIPanelType type)
+	    {
+	        Debug.Log("[PanelManager]" + type + " is opened");
+	        PushPanel(type);
+	    }
+	
+	    /// <summary>
+	    /// ï¿½ï¿½ï¿½Ã´Ë·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ý²ï¿½ï¿½ï¿½
+	    /// </summary>
+	    /// <param name="type"></param>
+	    public void OpenPanel<T>(eUIPanelType type, T param = default(T)) where T : IPanelParams
+	    {
+	        Debug.Log("[PanelManager]" + type + " is opened");
+	        BasePanel panel = GetPanel(type);
+	        panel.SetPanelParam(param);
+	        PushPanel(type);
+	    }
+	
+	    public void StartLoading()
+	    {
+	        Debug.Log("[PanelManager]Begin to load");
+	        OpenPanel(eUIPanelType.LoadingPanel);
+	        foreach (BasePanel bp in panelStack)
+	        {
+	            bp.gameObject.GetComponent<CanvasGroup>().interactable = false;
+	        }
+	    }
+	
+	    public void FinishLoading()
+	    {
+	        PopPanel();
+	        if (panelStack == null)
+	        {
+	            return;
+	        }
+	        //Debug.Log("[UIManager]Finish loading: " + panelStack.Count);
+	        foreach (BasePanel bp in panelStack)
+	        {
+	            if (bp.gameObject.TryGetComponent<LoadingPanel>(out LoadingPanel lp))
+	            {
+	
+	            }
+	            Debug.Log(bp.gameObject.name);
+	            bp.gameObject.GetComponent<CanvasGroup>().interactable = true;
+	        }
+	    }
+	
+	    public BasePanel GetTopPanel() 
+	    {
+	        if (panelStack == null || panelStack.Count <= 0)
+	        {
+	            Debug.Log($"[{nameof(PanelManager)}]There is no panel in stack");
+	            return null;
+	        }
+	        else
+	        {
+	            return panelStack.Peek();
+	        }
+	    }
+	
+	
+	    public BasePanel GetPanel(eUIPanelType type)
+	    {
+	        if (panelDict == null)
+	        {
+	            panelDict = new Dictionary<eUIPanelType, BasePanel>();
+	            Debug.Log($"[PanelManager]Failed to find {nameof(panelDict)}, create one");
+	        }
+	        //ï¿½ï¿½ï¿½ï¿½Õ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½typeï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½BasePanelï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ò·µ»ï¿½nullï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Extensionï¿½ï¿½ï¿½ï¿½
+	        BasePanel panel = panelDict.TryGetValue(type);
+	
+	        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Òµï¿½
+	        //Ö»ï¿½ï¿½È¥jsonï¿½ï¿½ï¿½ï¿½typeï¿½ï¿½Ó¦ï¿½ï¿½prefabï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	        //ï¿½Ù¼Ó½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½Â´ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Ð²ï¿½ï¿½ï¿½
+	        if (panel == null)
+	        {
+	            //ï¿½ï¿½ï¿½ï¿½Õ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½Typeï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½UIPanelï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ò·µ»ï¿½nullï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Extensionï¿½ï¿½ï¿½ï¿½
+	            string path = AllPanelList.SearchPanelForType(type).UIPanelPath;
+	            if (path == null)
+	                throw new Exception("[PanelManager]ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½UIPanelTypeï¿½ï¿½Prefab");
+	
+	            if (Resources.Load(path) == null)
+	                throw new Exception("[PanelManager]ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½Path(" + path + ")ï¿½ï¿½Prefab");
+	            //Êµï¿½ï¿½ï¿½ï¿½prefab
+	            GameObject instPanel = GameObject.Instantiate(Resources.Load(path)) as GameObject;
+	            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªCanvasï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å£¬falseï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½worldPositionï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½ï¿½ï¿½Canvasï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è¶¨localPosition
+	            instPanel.transform.SetParent(CanvasTransform, false);
+	
+	            panelDict.Add(type, instPanel.GetComponent<BasePanel>());
+	
+	            return instPanel.GetComponent<BasePanel>();
+	        }
+	
+	        return panel;
+	    }
+	
+	    //ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Íµï¿½panelï¿½ï¿½Õ»,ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½Ú³ï¿½ï¿½ï¿½ï¿½ï¿½
+	    public void PushPanel(eUIPanelType type)
+	    {
+	        if (panelStack == null)
+	            panelStack = new Stack<BasePanel>();
+	        //ï¿½Ð¶ï¿½Õ»ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½panel,ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ô­Õ»ï¿½ï¿½panelï¿½è¶¨ï¿½ï¿½×´Ì¬Îªï¿½ï¿½Í£(OnPause)
+	        if (panelStack.Count > 0)
+	        {
+	            BasePanel topPanel = panelStack.Peek();
+	            topPanel.OnPause();
+	        }
+	
+	
+	        BasePanel panel = GetPanel(type);
+	        panel.gameObject.SetActive(true);
+	        //ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Íµï¿½panelï¿½ï¿½Õ»ï¿½ï¿½ï¿½è¶¨ï¿½ï¿½×´Ì¬Îªï¿½ï¿½ï¿½ë³¡ï¿½ï¿½(OnEnter)
+	        panelStack.Push(panel);
+	
+	
+	        if (panel == null)
+	        {
+	            Debug.LogWarning("[PanelManager]" + type + " Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ " + typeof(BasePanel));
+	            return;
+	        }
+	        panel.OnEnter();
+	    }
+	
+	    //ï¿½ï¿½Õ»ï¿½ï¿½panelï¿½ï¿½Õ»,ï¿½ï¿½ï¿½Ó³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§
+	    public void PopPanel()
+	    {
+	        if (panelStack == null)
+	            panelStack = new Stack<BasePanel>();
+	
+	        //ï¿½ï¿½ï¿½Õ»ï¿½Ç·ï¿½Îªï¿½Õ£ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½ï¿½Ë³ï¿½ï¿½ï¿½ï¿½ï¿½
+	        if (panelStack.Count <= 0) return;
+	
+	        //foreach (var e in panelStack)
+	        //{
+	        //    Debug.Log(e.transform.name);
+	        //}
+	
+	
+	        //ï¿½ï¿½Õ»ï¿½ï¿½panelï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¸ï¿½panel×´Ì¬ï¿½ï¿½Îªï¿½Ë³ï¿½ï¿½ï¿½ï¿½ï¿½(OnExit)
+	        BasePanel topPanel = panelStack.Pop();
+	        Debug.Log("[PanelManager]" + topPanel.GetPanelType() + " is now popped");
+	        topPanel.OnExit();
+	
+	        //ï¿½Ù´Î¼ï¿½ï¿½ï¿½Õ»Õ»ï¿½ï¿½Panelï¿½ï¿½Õ»ï¿½Ç·ï¿½Îªï¿½ï¿½
+	        //ï¿½ï¿½Îªï¿½Õ£ï¿½Ö±ï¿½ï¿½ï¿½Ë³ï¿½ï¿½ï¿½ï¿½ï¿½
+	        //ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½Õ»ï¿½ï¿½Panel×´Ì¬ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½(OnResume)
+	        if (panelStack.Count <= 0) return;
+	        BasePanel topPanel2 = panelStack.Peek();
+	        Debug.Log($"[{nameof(PanelManager)}]The current top is : {topPanel2.name}");
+	        topPanel2.OnResume();
+	    }
+	
+	    public static void tweenHideGameObject(GameObject go, eDirection direction, float targetXvalue = LEFT_HIDE_VALUE)
+	    {
+	        switch ((int)direction)
+	        {
+	            case (int)eDirection.LEFT:
+	                go.transform.DOMoveX(targetXvalue, 1f).SetEase(Ease.InOutCirc);
+	                break;
+	        }
+	
+	
+	    }
+	}
+	
+	public enum eDirection
+	{
+	    UP = 0,
+	    DOWN,
+	    LEFT,
+	    RIGHT
+	}
 }

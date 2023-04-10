@@ -1,573 +1,576 @@
 using UnityEngine;
 
-/// <summary>
-/// Used to play sounds anywhere in the game
-/// </summary>
-public class SoundLoaderManager : SingletonForMonobehaviour<SoundLoaderManager>
+namespace TinyUFramework
 {
-    #region Variables
-    private GameObject cameraRef;
-    private Object soundObject;
-    private AudioSource loopAudioSource;
-    private AudioSource fxAudioSource;
-    private float fxVolume;
-    private float musicVolume;
-    //private float bgmfadeInTime;
-    private float fadeInTime;
-    private float fadeOutTime;
-    private bool fadeOutLoop;
-    private bool fadeIn;
-    private bool fadeOutComplete;
-    private bool startNewLoop;
-    private bool stopAllSounds;
-    private bool fadeOutFx;
-    private bool canStartSound;
-    private bool volumeChanged;
-    #endregion
     /// <summary>
-    /// initialize sound variables
+    /// Used to play sounds anywhere in the game
     /// </summary>
-    private void Start()
+    public class SoundLoaderManager : SingletonForMonobehaviour<SoundLoaderManager>
     {
-        canStartSound = true;
-        fadeInTime = 1f;
-        //bgmfadeInTime = 10f;
-        fadeOutTime = 0.5f;
-    }
-
-
-    #region Public Methods
-    /// <summary>
-    /// Call this at the beginning of your game to initialize the save values for sound
-    /// </summary>
-    /// <param name="cameraRef"></param>
-    /// <param name="fxVolume"></param>
-    /// <param name="musicVolume"></param>
-    public void InitializeSoundManager(GameObject cameraRef, float fxVolume, float musicVolume)
-    {
-        this.cameraRef = cameraRef;
-        this.fxVolume = fxVolume;
-        this.musicVolume = musicVolume;
-        volumeChanged = true;
-        Debug.Log("[SoundLoader]Initialized at fxVolume " + fxVolume + " musicVolume " + musicVolume);
-    }
-
-
-    /// <summary>
-    /// Set the volume for special effects
-    /// </summary>
-    /// <param name="volume">new volume</param>
-    public void SetFXVolume(float volume)
-    {
-        fxVolume = volume;
-        if (fxVolume > 1)
+        #region Variables
+        private GameObject cameraRef;
+        private Object soundObject;
+        private AudioSource loopAudioSource;
+        private AudioSource fxAudioSource;
+        private float fxVolume;
+        private float musicVolume;
+        //private float bgmfadeInTime;
+        private float fadeInTime;
+        private float fadeOutTime;
+        private bool fadeOutLoop;
+        private bool fadeIn;
+        private bool fadeOutComplete;
+        private bool startNewLoop;
+        private bool stopAllSounds;
+        private bool fadeOutFx;
+        private bool canStartSound;
+        private bool volumeChanged;
+        #endregion
+        /// <summary>
+        /// initialize sound variables
+        /// </summary>
+        private void Start()
         {
-            fxVolume = 1;
+            canStartSound = true;
+            fadeInTime = 1f;
+            //bgmfadeInTime = 10f;
+            fadeOutTime = 0.5f;
         }
-        if (fxVolume < 0)
+
+
+        #region Public Methods
+        /// <summary>
+        /// Call this at the beginning of your game to initialize the save values for sound
+        /// </summary>
+        /// <param name="cameraRef"></param>
+        /// <param name="fxVolume"></param>
+        /// <param name="musicVolume"></param>
+        public void InitializeSoundManager(GameObject cameraRef, float fxVolume, float musicVolume)
         {
-            fxVolume = 0;
+            this.cameraRef = cameraRef;
+            this.fxVolume = fxVolume;
+            this.musicVolume = musicVolume;
+            volumeChanged = true;
+            Debug.Log("[SoundLoader]Initialized at fxVolume " + fxVolume + " musicVolume " + musicVolume);
         }
-        volumeChanged = true;
-    }
 
 
-    /// <summary>
-    /// Set the current volume
-    /// </summary>
-    /// <returns></returns>
-    public float GetFxVolume()
-    {
-        return fxVolume;
-    }
-
-
-    /// <summary>
-    /// Set the volume for background music
-    /// </summary>
-    /// <param name="volume">new volume</param>
-    public void SetMusicVolume(float volume)
-    {
-        musicVolume = volume;
-        if (musicVolume > 1)
+        /// <summary>
+        /// Set the volume for special effects
+        /// </summary>
+        /// <param name="volume">new volume</param>
+        public void SetFXVolume(float volume)
         {
-            musicVolume = 1;
+            fxVolume = volume;
+            if (fxVolume > 1)
+            {
+                fxVolume = 1;
+            }
+            if (fxVolume < 0)
+            {
+                fxVolume = 0;
+            }
+            volumeChanged = true;
         }
-        if (musicVolume < 0)
+
+
+        /// <summary>
+        /// Set the current volume
+        /// </summary>
+        /// <returns></returns>
+        public float GetFxVolume()
         {
-            musicVolume = 0;
+            return fxVolume;
         }
-        volumeChanged = true;
-    }
 
 
-    /// <summary>
-    /// Get the current music volume
-    /// </summary>
-    /// <returns></returns>
-    public float GetMusicVolume()
-    {
-        return musicVolume;
-    }
-
-
-    /// <summary>
-    /// Add a background sound
-    /// </summary>
-    /// <param name="soundName">name of the audioClip,should be the path ralative to Sound folder, such like "Music/BGM"</param>
-    /// <param name="fadeIn">start with fade</param>
-    /// <param name="loop">play until stopped</param>
-    public void AddMusic(string soundName, bool fadeIn = true, bool loop = true)
-    {
-        soundObject = LoadSoundByName(soundName, "Sounds");
-        if (soundObject != null)
+        /// <summary>
+        /// Set the volume for background music
+        /// </summary>
+        /// <param name="volume">new volume</param>
+        public void SetMusicVolume(float volume)
         {
-            if (loopAudioSource == null)
+            musicVolume = volume;
+            if (musicVolume > 1)
             {
-                loopAudioSource = cameraRef.GetOrAddComponent<AudioSource>();
+                musicVolume = 1;
             }
-            if (!stopAllSounds)
+            if (musicVolume < 0)
             {
-                loopAudioSource.volume = musicVolume;
+                musicVolume = 0;
             }
-            if (fadeIn == false)
-            {
-                StartLoopSound(loop);
-            }
-
-            if (loopAudioSource.isPlaying)
-            {
-                fadeOutLoop = true;
-                fadeOutComplete = false;
-                startNewLoop = true;
-            }
-            else
-            {
-                loopAudioSource.volume = 0;
-                this.fadeIn = true;
-                StartLoopSound(loop);
-            }
+            volumeChanged = true;
         }
-        else
+
+
+        /// <summary>
+        /// Get the current music volume
+        /// </summary>
+        /// <returns></returns>
+        public float GetMusicVolume()
         {
-            Debug.LogError("[SoundLoader]" + soundName + " Could not be loaded");
+            return musicVolume;
         }
-        Debug.Log("[SoundLoader]" + soundName + " loaded successfully");
-    }
 
 
-    /// <summary>
-    /// Add a background sound
-    /// </summary>
-    /// <param name="clip">The bgm AudioClip</param>
-    /// <param name="fadeIn">start with fade</param>
-    /// <param name="loop">play until stopped</param>
-    public void AddMusic(AudioClip clip, bool fadeIn = true, bool loop = true)
-    {
-        soundObject = clip;
-        if (soundObject != null)
+        /// <summary>
+        /// Add a background sound
+        /// </summary>
+        /// <param name="soundName">name of the audioClip,should be the path ralative to Sound folder, such like "Music/BGM"</param>
+        /// <param name="fadeIn">start with fade</param>
+        /// <param name="loop">play until stopped</param>
+        public void AddMusic(string soundName, bool fadeIn = true, bool loop = true)
         {
-            if (loopAudioSource == null)
+            soundObject = LoadSoundByName(soundName, "Sounds");
+            if (soundObject != null)
             {
-                loopAudioSource = cameraRef.GetOrAddComponent<AudioSource>();
-            }
-            if (!stopAllSounds)
-            {
-                loopAudioSource.volume = musicVolume;
-            }
-            if (fadeIn == false)
-            {
-                StartLoopSound(loop);
-            }
-
-            if (loopAudioSource.isPlaying)
-            {
-                fadeOutLoop = true;
-                fadeOutComplete = false;
-                startNewLoop = true;
-            }
-            else
-            {
-                loopAudioSource.volume = 0;
-                this.fadeIn = true;
-                StartLoopSound(loop);
-            }
-        }
-        else
-        {
-            Debug.LogWarning($"[{nameof(SoundLoaderManager)}]The input clip is null");
-            return;
-        }
-        Debug.Log($"[{nameof(SoundLoaderManager)}]{clip.name} is setted as BGM!");
-    }
-
-    /// <summary>
-    /// Add a special effect sound
-    /// </summary>
-    /// <param name="soundName">name of the sound</param>
-    /// <param name="loop">play until it is stopped</param>
-    public void AddFxSound(string soundName, bool loop = false)
-    {
-        Object soundObject = LoadSoundByName(soundName, "Sounds");
-        if (soundObject != null)
-        {
-            if (canStartSound == true)
-            {
-                if (fxAudioSource == null)
+                if (loopAudioSource == null)
                 {
-                    fxAudioSource = cameraRef.AddComponent<AudioSource>();
+                    loopAudioSource = cameraRef.GetOrAddComponent<AudioSource>();
                 }
                 if (!stopAllSounds)
                 {
-                    fxAudioSource.volume = fxVolume;
+                    loopAudioSource.volume = musicVolume;
                 }
-                if (loop == false)
+                if (fadeIn == false)
                 {
-                    fxAudioSource.PlayOneShot((AudioClip)soundObject, fxAudioSource.volume);
+                    StartLoopSound(loop);
+                }
+
+                if (loopAudioSource.isPlaying)
+                {
+                    fadeOutLoop = true;
+                    fadeOutComplete = false;
+                    startNewLoop = true;
                 }
                 else
                 {
-                    fxAudioSource.clip = (AudioClip)soundObject;
-                    fxAudioSource.loop = true;
-                    fxAudioSource.playOnAwake = true;
-                    fxAudioSource.Play();
+                    loopAudioSource.volume = 0;
+                    this.fadeIn = true;
+                    StartLoopSound(loop);
                 }
             }
-        }
-        else
-        {
-            Debug.LogError("[SoundLoader]" + soundName + " Could not be loaded");
-        }
-    }
-
-    /// <summary>
-    /// Add a special effect sound
-    /// </summary>
-    /// <param name="soundName">name of the sound</param>
-    /// <param name="loop">play until it is stopped</param>
-    public void AddFxSound(AudioClip clip, bool loop = false)
-    {
-        Object soundObject = clip;
-        if (soundObject != null)
-        {
-            if (canStartSound == true)
+            else
             {
-                if (fxAudioSource == null)
+                Debug.LogError("[SoundLoader]" + soundName + " Could not be loaded");
+            }
+            Debug.Log("[SoundLoader]" + soundName + " loaded successfully");
+        }
+
+
+        /// <summary>
+        /// Add a background sound
+        /// </summary>
+        /// <param name="clip">The bgm AudioClip</param>
+        /// <param name="fadeIn">start with fade</param>
+        /// <param name="loop">play until stopped</param>
+        public void AddMusic(AudioClip clip, bool fadeIn = true, bool loop = true)
+        {
+            soundObject = clip;
+            if (soundObject != null)
+            {
+                if (loopAudioSource == null)
                 {
-                    fxAudioSource = cameraRef.AddComponent<AudioSource>();
+                    loopAudioSource = cameraRef.GetOrAddComponent<AudioSource>();
                 }
                 if (!stopAllSounds)
                 {
-                    fxAudioSource.volume = fxVolume;
+                    loopAudioSource.volume = musicVolume;
                 }
-                if (loop == false)
+                if (fadeIn == false)
                 {
-                    fxAudioSource.PlayOneShot((AudioClip)soundObject, fxAudioSource.volume);
+                    StartLoopSound(loop);
+                }
+
+                if (loopAudioSource.isPlaying)
+                {
+                    fadeOutLoop = true;
+                    fadeOutComplete = false;
+                    startNewLoop = true;
                 }
                 else
                 {
-                    fxAudioSource.clip = (AudioClip)soundObject;
-                    fxAudioSource.loop = true;
-                    fxAudioSource.playOnAwake = true;
-                    fxAudioSource.Play();
+                    loopAudioSource.volume = 0;
+                    this.fadeIn = true;
+                    StartLoopSound(loop);
                 }
             }
+            else
+            {
+                Debug.LogWarning($"[{nameof(SoundLoaderManager)}]The input clip is null");
+                return;
+            }
+            Debug.Log($"[{nameof(SoundLoaderManager)}]{clip.name} is setted as BGM!");
         }
-        else
-        {
-            Debug.LogWarning($"[{nameof(SoundLoaderManager)}]The input clip is null");
-            return;
-        }
-        Debug.Log($"[{nameof(SoundLoaderManager)}]{clip.name} is played as Sound FX!");
-    }
 
-    /// <summary>
-    /// Stop all game sounds with fade out.
-    /// </summary>
-    public void StopSoundsWithFade()
-    {
-        canStartSound = false;
-        if (loopAudioSource != null)
+        /// <summary>
+        /// Add a special effect sound
+        /// </summary>
+        /// <param name="soundName">name of the sound</param>
+        /// <param name="loop">play until it is stopped</param>
+        public void AddFxSound(string soundName, bool loop = false)
+        {
+            Object soundObject = LoadSoundByName(soundName, "Sounds");
+            if (soundObject != null)
+            {
+                if (canStartSound == true)
+                {
+                    if (fxAudioSource == null)
+                    {
+                        fxAudioSource = cameraRef.AddComponent<AudioSource>();
+                    }
+                    if (!stopAllSounds)
+                    {
+                        fxAudioSource.volume = fxVolume;
+                    }
+                    if (loop == false)
+                    {
+                        fxAudioSource.PlayOneShot((AudioClip)soundObject, fxAudioSource.volume);
+                    }
+                    else
+                    {
+                        fxAudioSource.clip = (AudioClip)soundObject;
+                        fxAudioSource.loop = true;
+                        fxAudioSource.playOnAwake = true;
+                        fxAudioSource.Play();
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError("[SoundLoader]" + soundName + " Could not be loaded");
+            }
+        }
+
+        /// <summary>
+        /// Add a special effect sound
+        /// </summary>
+        /// <param name="soundName">name of the sound</param>
+        /// <param name="loop">play until it is stopped</param>
+        public void AddFxSound(AudioClip clip, bool loop = false)
+        {
+            Object soundObject = clip;
+            if (soundObject != null)
+            {
+                if (canStartSound == true)
+                {
+                    if (fxAudioSource == null)
+                    {
+                        fxAudioSource = cameraRef.AddComponent<AudioSource>();
+                    }
+                    if (!stopAllSounds)
+                    {
+                        fxAudioSource.volume = fxVolume;
+                    }
+                    if (loop == false)
+                    {
+                        fxAudioSource.PlayOneShot((AudioClip)soundObject, fxAudioSource.volume);
+                    }
+                    else
+                    {
+                        fxAudioSource.clip = (AudioClip)soundObject;
+                        fxAudioSource.loop = true;
+                        fxAudioSource.playOnAwake = true;
+                        fxAudioSource.Play();
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[{nameof(SoundLoaderManager)}]The input clip is null");
+                return;
+            }
+            Debug.Log($"[{nameof(SoundLoaderManager)}]{clip.name} is played as Sound FX!");
+        }
+
+        /// <summary>
+        /// Stop all game sounds with fade out.
+        /// </summary>
+        public void StopSoundsWithFade()
+        {
+            canStartSound = false;
+            if (loopAudioSource != null)
+            {
+                fadeOutLoop = true;
+            }
+            if (fxAudioSource != null)
+            {
+                fadeOutFx = true;
+            }
+        }
+
+
+        /// <summary>
+        /// Fade out only Music sound 
+        /// </summary>
+        public void FadeOutMusic()
         {
             fadeOutLoop = true;
         }
-        if (fxAudioSource != null)
+
+
+        /// <summary>
+        /// Pause all game sounds
+        /// </summary>
+        public void PauseAllSounds()
         {
-            fadeOutFx = true;
-        }
-    }
-
-
-    /// <summary>
-    /// Fade out only Music sound 
-    /// </summary>
-    public void FadeOutMusic()
-    {
-        fadeOutLoop = true;
-    }
-
-
-    /// <summary>
-    /// Pause all game sounds
-    /// </summary>
-    public void PauseAllSounds()
-    {
-        stopAllSounds = true;
-        loopAudioSource.volume = 0;
-        if (loopAudioSource.isPlaying)
-        {
-            loopAudioSource.Pause();
-        }
-        fxAudioSource.volume = 0;
-        if (fxAudioSource.isPlaying)
-        {
-            fxAudioSource.Pause();
-        }
-    }
-
-
-    /// <summary>
-    /// Stop all FX sounds
-    /// </summary>
-    public void StopFxSounds()
-    {
-        if (fxAudioSource != null)
-        {
-            fxAudioSource.Stop();
-        }
-    }
-
-
-    /// <summary>
-    /// Stop all the Music sounds
-    /// </summary>
-    public void StopMusic()
-    {
-        if (loopAudioSource != null)
-        {
-            loopAudioSource.Stop();
-        }
-    }
-
-
-    /// <summary>
-    /// Stop all sounds in the game
-    /// </summary>
-    public void StopAllSounds()
-    {
-        try
-        {
+            stopAllSounds = true;
             loopAudioSource.volume = 0;
             if (loopAudioSource.isPlaying)
             {
-                loopAudioSource.Stop();
-                loopAudioSource.clip = null;
+                loopAudioSource.Pause();
             }
-
             fxAudioSource.volume = 0;
             if (fxAudioSource.isPlaying)
+            {
+                fxAudioSource.Pause();
+            }
+        }
+
+
+        /// <summary>
+        /// Stop all FX sounds
+        /// </summary>
+        public void StopFxSounds()
+        {
+            if (fxAudioSource != null)
             {
                 fxAudioSource.Stop();
             }
         }
-        catch
+
+
+        /// <summary>
+        /// Stop all the Music sounds
+        /// </summary>
+        public void StopMusic()
         {
-        }
-    }
-
-
-    /// <summary>
-    /// Resume all sounds
-    /// </summary>
-    public void ResumeAllSounds()
-    {
-        if (stopAllSounds)
-        {
-            stopAllSounds = false;
-            loopAudioSource.Play();
-            fxAudioSource.volume = fxVolume;
-            fxAudioSource.Play();
-        }
-    }
-    #endregion
-
-    #region Private Methods
-    /// <summary>
-    /// Used to make Fade In/Out on loop sounds
-    /// </summary>
-    private void Update()
-    {
-        if (fadeOutLoop)
-        {
-            FadeOutSound(loopAudioSource, fadeOutTime);
-        }
-
-        if (fadeOutFx)
-        {
-            FadeOutSound(fxAudioSource, fadeOutTime);
-
-        }
-
-        if (fadeIn)
-        {
-            FadeInSound(loopAudioSource, fadeInTime);
-        }
-
-        if (fadeOutComplete == true && startNewLoop == true)
-        {
-            fadeOutComplete = false;
-            startNewLoop = false;
-            fadeIn = true;
-            StartLoopSound();
-        }
-
-        if (fadeIn == false && fadeOutLoop == false && stopAllSounds == false && fadeOutFx == false)
-        {
-            if (volumeChanged == true)
+            if (loopAudioSource != null)
             {
-                if (fxAudioSource)
-                {
-                    fxAudioSource.volume = fxVolume;
-                }
-
-                if (loopAudioSource)
-                {
-                    loopAudioSource.volume = musicVolume;
-                }
-                volumeChanged = false;
+                loopAudioSource.Stop();
             }
         }
-    }
 
 
-    /// <summary>
-    /// Load an audio clip from Resources
-    /// </summary>
-    /// <param name="soundName">name of the sound</param>
-    /// <param name="folderName">path to resources folder</param>
-    /// <returns></returns>
-    private Object LoadSoundByName(string soundName, string folderName = "")
-    {
-        //Debug.Log("[SoundLoader]The path of the audio relative to the Resources folder is /" + folderName + "/" + soundName);
-        Object loadedSound = null;
-        if (folderName == "")
+        /// <summary>
+        /// Stop all sounds in the game
+        /// </summary>
+        public void StopAllSounds()
         {
             try
             {
-                loadedSound = Resources.Load(soundName, typeof(AudioClip));
-
-            }
-            catch
-            {
-                Debug.LogError("[SoundLoader]Error loading " + soundName);
-            }
-        }
-        else
-        {
-            try
-            {
-                loadedSound = Resources.Load(folderName + "/" + soundName, typeof(AudioClip));
-            }
-            catch
-            {
-                Debug.LogError("[SoundLoader]Error loading sound " + soundName + " in folder " + folderName);
-            }
-        }
-        return loadedSound;
-    }
-
-
-    /// <summary>
-    /// Start playing a background sound
-    /// called by AddMusic method
-    /// </summary>
-    /// <param name="loop"></param>
-    private void StartLoopSound(bool loop = true)
-    {
-        loopAudioSource.clip = (AudioClip)soundObject;
-        loopAudioSource.loop = loop;
-        loopAudioSource.playOnAwake = true;
-        loopAudioSource.Play();
-    }
-
-
-    /// <summary>
-    /// Fade out an audioSource
-    /// </summary>
-    /// <param name="targetAudioSource">target audioSource</param>
-    /// <param name="fadeTime">fade out time</param>
-    private void FadeOutSound(AudioSource targetAudioSource, float fadeTime)
-    {
-        if (targetAudioSource != null)
-        {
-            if (targetAudioSource.volume > 0.1)
-            {
-                //Debug.Log(targetAudioSource.volume);
-                if (Time.deltaTime == 0)
+                loopAudioSource.volume = 0;
+                if (loopAudioSource.isPlaying)
                 {
-                    targetAudioSource.volume -= 0.02f / fadeTime;
+                    loopAudioSource.Stop();
+                    loopAudioSource.clip = null;
                 }
-                else
+
+                fxAudioSource.volume = 0;
+                if (fxAudioSource.isPlaying)
                 {
-                    targetAudioSource.volume -= Time.deltaTime / fadeTime;
+                    fxAudioSource.Stop();
+                }
+            }
+            catch
+            {
+            }
+        }
+
+
+        /// <summary>
+        /// Resume all sounds
+        /// </summary>
+        public void ResumeAllSounds()
+        {
+            if (stopAllSounds)
+            {
+                stopAllSounds = false;
+                loopAudioSource.Play();
+                fxAudioSource.volume = fxVolume;
+                fxAudioSource.Play();
+            }
+        }
+        #endregion
+
+        #region Private Methods
+        /// <summary>
+        /// Used to make Fade In/Out on loop sounds
+        /// </summary>
+        private void Update()
+        {
+            if (fadeOutLoop)
+            {
+                FadeOutSound(loopAudioSource, fadeOutTime);
+            }
+
+            if (fadeOutFx)
+            {
+                FadeOutSound(fxAudioSource, fadeOutTime);
+
+            }
+
+            if (fadeIn)
+            {
+                FadeInSound(loopAudioSource, fadeInTime);
+            }
+
+            if (fadeOutComplete == true && startNewLoop == true)
+            {
+                fadeOutComplete = false;
+                startNewLoop = false;
+                fadeIn = true;
+                StartLoopSound();
+            }
+
+            if (fadeIn == false && fadeOutLoop == false && stopAllSounds == false && fadeOutFx == false)
+            {
+                if (volumeChanged == true)
+                {
+                    if (fxAudioSource)
+                    {
+                        fxAudioSource.volume = fxVolume;
+                    }
+
+                    if (loopAudioSource)
+                    {
+                        loopAudioSource.volume = musicVolume;
+                    }
+                    volumeChanged = false;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Load an audio clip from Resources
+        /// </summary>
+        /// <param name="soundName">name of the sound</param>
+        /// <param name="folderName">path to resources folder</param>
+        /// <returns></returns>
+        private Object LoadSoundByName(string soundName, string folderName = "")
+        {
+            //Debug.Log("[SoundLoader]The path of the audio relative to the Resources folder is /" + folderName + "/" + soundName);
+            Object loadedSound = null;
+            if (folderName == "")
+            {
+                try
+                {
+                    loadedSound = Resources.Load(soundName, typeof(AudioClip));
+
+                }
+                catch
+                {
+                    Debug.LogError("[SoundLoader]Error loading " + soundName);
                 }
             }
             else
             {
-                canStartSound = true;
-                targetAudioSource.volume = 0;
-                fadeOutComplete = true;
-                targetAudioSource.Stop();
-                targetAudioSource.clip = null;
-
-                if (targetAudioSource == loopAudioSource)
+                try
                 {
-                    fadeOutLoop = false;
+                    loadedSound = Resources.Load(folderName + "/" + soundName, typeof(AudioClip));
+                }
+                catch
+                {
+                    Debug.LogError("[SoundLoader]Error loading sound " + soundName + " in folder " + folderName);
+                }
+            }
+            return loadedSound;
+        }
+
+
+        /// <summary>
+        /// Start playing a background sound
+        /// called by AddMusic method
+        /// </summary>
+        /// <param name="loop"></param>
+        private void StartLoopSound(bool loop = true)
+        {
+            loopAudioSource.clip = (AudioClip)soundObject;
+            loopAudioSource.loop = loop;
+            loopAudioSource.playOnAwake = true;
+            loopAudioSource.Play();
+        }
+
+
+        /// <summary>
+        /// Fade out an audioSource
+        /// </summary>
+        /// <param name="targetAudioSource">target audioSource</param>
+        /// <param name="fadeTime">fade out time</param>
+        private void FadeOutSound(AudioSource targetAudioSource, float fadeTime)
+        {
+            if (targetAudioSource != null)
+            {
+                if (targetAudioSource.volume > 0.1)
+                {
+                    //Debug.Log(targetAudioSource.volume);
+                    if (Time.deltaTime == 0)
+                    {
+                        targetAudioSource.volume -= 0.02f / fadeTime;
+                    }
+                    else
+                    {
+                        targetAudioSource.volume -= Time.deltaTime / fadeTime;
+                    }
                 }
                 else
                 {
-                    if (targetAudioSource == fxAudioSource)
+                    canStartSound = true;
+                    targetAudioSource.volume = 0;
+                    fadeOutComplete = true;
+                    targetAudioSource.Stop();
+                    targetAudioSource.clip = null;
+
+                    if (targetAudioSource == loopAudioSource)
                     {
-                        fadeOutFx = false;
+                        fadeOutLoop = false;
+                    }
+                    else
+                    {
+                        if (targetAudioSource == fxAudioSource)
+                        {
+                            fadeOutFx = false;
+                        }
                     }
                 }
             }
         }
-    }
 
 
-    /// <summary>
-    /// Fade in an audioSource
-    /// </summary>
-    /// <param name="targetAudioSource">target audioSource</param>
-    /// <param name="fadeTime">fade time</param>
-    private void FadeInSound(AudioSource targetAudioSource, float fadeTime)
-    {
-        float currentVolume;
-        if (targetAudioSource == loopAudioSource)
+        /// <summary>
+        /// Fade in an audioSource
+        /// </summary>
+        /// <param name="targetAudioSource">target audioSource</param>
+        /// <param name="fadeTime">fade time</param>
+        private void FadeInSound(AudioSource targetAudioSource, float fadeTime)
         {
-            currentVolume = musicVolume;
-        }
-        else
-        {
-            currentVolume = fxVolume;
-        }
-
-        if (!stopAllSounds)
-        {
-            if (targetAudioSource.volume < currentVolume)
+            float currentVolume;
+            if (targetAudioSource == loopAudioSource)
             {
-                targetAudioSource.volume += Time.deltaTime / fadeTime;
+                currentVolume = musicVolume;
+            }
+            else
+            {
+                currentVolume = fxVolume;
+            }
+
+            if (!stopAllSounds)
+            {
+                if (targetAudioSource.volume < currentVolume)
+                {
+                    targetAudioSource.volume += Time.deltaTime / fadeTime;
+                }
+                else
+                {
+                    fadeIn = false;
+                }
             }
             else
             {
                 fadeIn = false;
             }
         }
-        else
-        {
-            fadeIn = false;
-        }
+        #endregion
     }
-    #endregion
 }

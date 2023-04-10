@@ -2,44 +2,47 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Button))]
-public class ButtonStyleController : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler
+namespace TinyUFramework
 {
-
-    Color NormalColor = SaveDataManager.ThemeColor_G_Normal;
-    Color HighlightColor = SaveDataManager.ThemeColor_G_Highlight;
-     
-    void OnEnable()
+    [RequireComponent(typeof(Button))]
+    public class ButtonStyleController : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler
     {
-        ChangeBtnStyle();      
-    }
 
-    void ChangeBtnStyle() 
-    {
-        Button btn = gameObject.GetComponent<Button>();
-        ColorBlock rawCB = btn.colors;
-        ColorBlock styleCB = rawCB;
-        if (rawCB.normalColor == ColorBlock.defaultColorBlock.normalColor)
+        Color NormalColor = SaveDataManager.ThemeColor_G_Normal;
+        Color HighlightColor = SaveDataManager.ThemeColor_G_Highlight;
+
+        void OnEnable()
         {
-            Debug.Log($"[{nameof(ButtonStyleController)}]'s style has been changed");
-            styleCB.normalColor = NormalColor;
+            ChangeBtnStyle();
         }
 
-        if (rawCB.highlightedColor == ColorBlock.defaultColorBlock.highlightedColor)
-        { 
-            styleCB.highlightedColor = HighlightColor;
+        void ChangeBtnStyle()
+        {
+            Button btn = gameObject.GetComponent<Button>();
+            ColorBlock rawCB = btn.colors;
+            ColorBlock styleCB = rawCB;
+            if (rawCB.normalColor == ColorBlock.defaultColorBlock.normalColor)
+            {
+                Debug.Log($"[{nameof(ButtonStyleController)}]'s style has been changed");
+                styleCB.normalColor = NormalColor;
+            }
+
+            if (rawCB.highlightedColor == ColorBlock.defaultColorBlock.highlightedColor)
+            {
+                styleCB.highlightedColor = HighlightColor;
+            }
+
+            btn.colors = styleCB;
         }
 
-        btn.colors = styleCB;
-    }
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            SoundLoaderManager.Instance.AddFxSound(PrefabLoader.Instance.buttonEnter);
+        }
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        SoundLoaderManager.Instance.AddFxSound(PrefabLoader.Instance.buttonEnter);
-    }
-
-    public void OnPointerClick (PointerEventData eventData)
-    {
-        SoundLoaderManager.Instance.AddFxSound(PrefabLoader.Instance.buttonClick);
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            SoundLoaderManager.Instance.AddFxSound(PrefabLoader.Instance.buttonClick);
+        }
     }
 }

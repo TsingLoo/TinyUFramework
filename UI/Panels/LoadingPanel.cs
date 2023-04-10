@@ -2,7 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class LoadingPanel : BasePanel
-{
 
+ namespace TinyUFramework {	
+	public class LoadingPanel : BasePanel
+	{
+	
+	}
 }
