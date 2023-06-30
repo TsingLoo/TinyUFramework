@@ -16,7 +16,7 @@ public class ClickRichText : MonoBehaviour, IPointerClickHandler
         if (linkIndex > -1)
         {
             TMP_LinkInfo linkInfo = text.textInfo.linkInfo[linkIndex];
-            Debug.Log(linkInfo.GetLinkText());
+            Debug.Log($"[{nameof(ClickRichText)}] {linkInfo.GetLinkText()}");
             Application.OpenURL(linkInfo.GetLinkID());
         }
     }

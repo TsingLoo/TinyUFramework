@@ -56,16 +56,7 @@ public class BasePanel : MonoBehaviour
     {
         if (panelParams != null)
         {
-            if (panelParams is IPanelParams)
-            {
-                this.panelParams = panelParams;
-            }
-            else
-            {
-                Debug.LogError("[UIManager]Params passed have wrong type! (" + panelParams.GetType() + " instead of " +
-                               typeof(IUIParams) + ")");
-                return;
-            }
+            this.panelParams = panelParams;
         }
         this.panelParams = panelParams;
     }

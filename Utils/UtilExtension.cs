@@ -27,8 +27,8 @@ public static class UtilExtension
     public static TValue TryGetValue<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key)
     {
         /// <summary>
-        /// 扩展字典类中的TryGetValue方法
-        /// 可以直接通过给出key返回value,而不是像原方法一样返回bool值
+        /// 脌漏脮鹿脳脰碌盲脌脿脰脨碌脛TryGetValue路陆路篓
+        /// 驴脡脪脭脰卤陆脫脥篓鹿媒赂酶鲁枚key路碌禄脴value,露酶虏禄脢脟脧帽脭颅路陆路篓脪禄脩霉路碌禄脴bool脰碌
         /// </summary>
         /// <typeparam name="TKey"></typeparam>
         /// <typeparam name="TValue"></typeparam>
@@ -43,10 +43,10 @@ public static class UtilExtension
     }
 
     /// <summary>
-    /// 扩展List类
-    /// 查找字段是指定UIPanelType的UIPanel,返回UIPanel的引用
+    /// 脌漏脮鹿List脌脿
+    /// 虏茅脮脪脳脰露脦脢脟脰赂露篓UIPanelType碌脛UIPanel,路碌禄脴UIPanel碌脛脪媒脫脙
     /// </summary>
-    /// <param name="list">UIPanel的List</param>
+    /// <param name="list">UIPanel碌脛List</param>
     /// <param name="type"></param>
     /// <returns></returns>
     /// 
@@ -171,26 +171,26 @@ public static class UtilExtension
     public static Texture2D LoadTextureByIO(string path)
     {
         FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
-        fs.Seek(0, SeekOrigin.Begin);//游标的操作，可有可无
-        byte[] bytes = new byte[fs.Length];//生命字节，用来存储读取到的图片字节
+        fs.Seek(0, SeekOrigin.Begin);//脫脦卤锚碌脛虏脵脳梅拢卢驴脡脫脨驴脡脦脼
+        byte[] bytes = new byte[fs.Length];//脡煤脙眉脳脰陆脷拢卢脫脙脌麓麓忙麓垄露脕脠隆碌陆碌脛脥录脝卢脳脰陆脷
         try
         {
-            fs.Read(bytes, 0, bytes.Length);//开始读取，这里最好用trycatch语句，防止读取失败报错
+            fs.Read(bytes, 0, bytes.Length);//驴陋脢录露脕脠隆拢卢脮芒脌茂脳卯潞脙脫脙trycatch脫茂戮盲拢卢路脌脰鹿露脕脠隆脢搂掳脺卤篓麓铆
 
         }
         catch (Exception e)
         {
             Debug.Log(e);
         }
-        fs.Close();//切记关闭
+        fs.Close();//脟脨录脟鹿脴卤脮
 
-        int width = 2048;//图片的宽（这里两个参数可以提到方法参数中）
-        int height = 2048;//图片的高（这里说个题外话，pico相关的开发，这里不能大于4k×4k不然会显示异常，当时开发pico的时候应为这个问题找了大半天原因，因为美术给的图是6000*3600，导致出现切几张图后就黑屏了。。。
+        int width = 2048;//脥录脝卢碌脛驴铆拢篓脮芒脌茂脕陆赂枚虏脦脢媒驴脡脪脭脤谩碌陆路陆路篓虏脦脢媒脰脨拢漏
+        int height = 2048;//脥录脝卢碌脛赂脽拢篓脮芒脌茂脣碌赂枚脤芒脥芒禄掳拢卢pico脧脿鹿脴碌脛驴陋路垄拢卢脮芒脌茂虏禄脛脺麓贸脫脷4k隆脕4k虏禄脠禄禄谩脧脭脢戮脪矛鲁拢拢卢碌卤脢卤驴陋路垄pico碌脛脢卤潞貌脫娄脦陋脮芒赂枚脦脢脤芒脮脪脕脣麓贸掳毛脤矛脭颅脪貌拢卢脪貌脦陋脙脌脢玫赂酶碌脛脥录脢脟6000*3600拢卢碌录脰脗鲁枚脧脰脟脨录赂脮脜脥录潞贸戮脥潞脷脝脕脕脣隆拢隆拢隆拢
         Texture2D texture = new Texture2D(width, height);
         if (texture.LoadImage(bytes))
         {
             Debug.Log("[IO] Load Image succesfully " + path);
-            return texture;//将生成的texture2d返回，到这里就得到了外部的图片，可以使用了
+            return texture;//陆芦脡煤鲁脡碌脛texture2d路碌禄脴拢卢碌陆脮芒脌茂戮脥碌脙碌陆脕脣脥芒虏驴碌脛脥录脝卢拢卢驴脡脪脭脢鹿脫脙脕脣
 
         }
         else

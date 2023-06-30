@@ -21,7 +21,7 @@ public class ButtonStyleController : MonoBehaviour, IPointerEnterHandler, IPoint
         ColorBlock styleCB = rawCB;
         if (rawCB.normalColor == ColorBlock.defaultColorBlock.normalColor)
         {
-            Debug.Log($"[{nameof(ButtonStyleController)}]'s style has been changed");
+            //Debug.Log($"[{nameof(ButtonStyleController)}] {gameObject.name}'s style has been changed");
             styleCB.normalColor = NormalColor;
         }
 

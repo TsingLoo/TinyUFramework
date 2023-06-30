@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// Used to play sounds anywhere in the game
 /// </summary>
-public class SoundLoaderManager : SingletonForMonobehaviour<SoundLoaderManager>
+public class SoundLoaderManager : SingletonForMonoBehaviourPersistent<SoundLoaderManager>
 {
     #region Variables
     private GameObject cameraRef;
@@ -30,7 +30,7 @@ public class SoundLoaderManager : SingletonForMonobehaviour<SoundLoaderManager>
     private void Start()
     {
         canStartSound = true;
-        fadeInTime = 1f;
+        fadeInTime = 10f;
         //bgmfadeInTime = 10f;
         fadeOutTime = 0.5f;
     }
@@ -49,7 +49,7 @@ public class SoundLoaderManager : SingletonForMonobehaviour<SoundLoaderManager>
         this.fxVolume = fxVolume;
         this.musicVolume = musicVolume;
         volumeChanged = true;
-        Debug.Log("[SoundLoader]Initialized at fxVolume " + fxVolume + " musicVolume " + musicVolume);
+        Debug.Log("[SoundLoader] Initialized at fxVolume " + fxVolume + " musicVolume " + musicVolume);
     }
 
 
@@ -195,10 +195,10 @@ public class SoundLoaderManager : SingletonForMonobehaviour<SoundLoaderManager>
         }
         else
         {
-            Debug.LogWarning($"[{nameof(SoundLoaderManager)}]The input clip is null");
+            Debug.LogWarning($"[{nameof(SoundLoaderManager)}] The input clip is null");
             return;
         }
-        Debug.Log($"[{nameof(SoundLoaderManager)}]{clip.name} is setted as BGM!");
+        Debug.Log($"[{nameof(SoundLoaderManager)}] {clip.name} is setted as BGM!");
     }
 
     /// <summary>
@@ -275,10 +275,10 @@ public class SoundLoaderManager : SingletonForMonobehaviour<SoundLoaderManager>
         }
         else
         {
-            Debug.LogWarning($"[{nameof(SoundLoaderManager)}]The input clip is null");
+            Debug.LogWarning($"[{nameof(SoundLoaderManager)}] The input clip is null");
             return;
         }
-        Debug.Log($"[{nameof(SoundLoaderManager)}]{clip.name} is played as Sound FX!");
+        Debug.Log($"[{nameof(SoundLoaderManager)}] {clip.name} is played as Sound FX!");
     }
 
     /// <summary>

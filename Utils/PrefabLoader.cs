@@ -1,18 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
-public class PrefabLoader : SingletonForMonobehaviour<PrefabLoader>
+public class PrefabLoader : SingletonForMonoBehaviourPersistent<PrefabLoader>
 {
-
-    #region mono
-    private void Awake()
-    {
-        InitPanelDict();
-    }
-    #endregion
-
+#if false
     #region UIPanel 
     [Header("UIPanel")]
     [SerializeField] List<GameObject> Obj_AllPanelList;
@@ -45,7 +35,8 @@ public class PrefabLoader : SingletonForMonobehaviour<PrefabLoader>
     }
 
     #endregion
-
+#endif
+    
     #region Audio
     [Header("Audio")]
     public AudioClip error;
