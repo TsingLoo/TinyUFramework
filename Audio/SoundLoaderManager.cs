@@ -1,6 +1,6 @@
 using UnityEngine;
 
- namespace TinyUFramework {	
+namespace TinyUFramework {	
 	/// <summary>
 	/// Used to play sounds anywhere in the game
 	/// </summary>

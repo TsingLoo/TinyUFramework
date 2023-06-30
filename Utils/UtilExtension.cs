@@ -27,30 +27,12 @@ using UnityEngine;
 	
 	    public static TValue TryGetValue<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key)
 	    {
-	        /// <summary>
-	        /// À©Õ¹×ÖµäÀàÖÐµÄTryGetValue·½·¨
-	        /// ¿ÉÒÔÖ±½ÓÍ¨¹ý¸ø³ökey·µ»Øvalue,¶ø²»ÊÇÏñÔ­·½·¨Ò»Ñù·µ»ØboolÖµ
-	        /// </summary>
-	        /// <typeparam name="TKey"></typeparam>
-	        /// <typeparam name="TValue"></typeparam>
-	        /// <param name="dict"></param>
-	        /// <param name="key"></param>
-	        /// <returns></returns>
-	
 	        TValue value;
 	        dict.TryGetValue(key, out value);
 	
 	        return value;
 	    }
 	
-	    /// <summary>
-	    /// À©Õ¹ListÀà
-	    /// ²éÕÒ×Ö¶ÎÊÇÖ¸¶¨UIPanelTypeµÄUIPanel,·µ»ØUIPanelµÄÒýÓÃ
-	    /// </summary>
-	    /// <param name="list">UIPanelµÄList</param>
-	    /// <param name="type"></param>
-	    /// <returns></returns>
-	    /// 
 	    public static UIPanelJson SearchPanelForType(this List<UIPanelJson> list, eUIPanelType type)
 	    {
 	        foreach (var item in list)
@@ -172,27 +154,25 @@ using UnityEngine;
 	    public static Texture2D LoadTextureByIO(string path)
 	    {
 	        FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
-	        fs.Seek(0, SeekOrigin.Begin);//ÓÎ±êµÄ²Ù×÷£¬¿ÉÓÐ¿ÉÎÞ
-	        byte[] bytes = new byte[fs.Length];//ÉúÃü×Ö½Ú£¬ÓÃÀ´´æ´¢¶ÁÈ¡µ½µÄÍ¼Æ¬×Ö½Ú
+	        fs.Seek(0, SeekOrigin.Begin);
+	        byte[] bytes = new byte[fs.Length];
 	        try
 	        {
-	            fs.Read(bytes, 0, bytes.Length);//¿ªÊ¼¶ÁÈ¡£¬ÕâÀï×îºÃÓÃtrycatchÓï¾ä£¬·ÀÖ¹¶ÁÈ¡Ê§°Ü±¨´í
+	            fs.Read(bytes, 0, bytes.Length);
 	
 	        }
 	        catch (Exception e)
 	        {
 	            Debug.Log(e);
 	        }
-	        fs.Close();//ÇÐ¼Ç¹Ø±Õ
-	
-	        int width = 2048;//Í¼Æ¬µÄ¿í£¨ÕâÀïÁ½¸ö²ÎÊý¿ÉÒÔÌáµ½·½·¨²ÎÊýÖÐ£©
-	        int height = 2048;//Í¼Æ¬µÄ¸ß£¨ÕâÀïËµ¸öÌâÍâ»°£¬picoÏà¹ØµÄ¿ª·¢£¬ÕâÀï²»ÄÜ´óÓÚ4k¡Á4k²»È»»áÏÔÊ¾Òì³££¬µ±Ê±¿ª·¢picoµÄÊ±ºòÓ¦ÎªÕâ¸öÎÊÌâÕÒÁË´ó°ëÌìÔ­Òò£¬ÒòÎªÃÀÊõ¸øµÄÍ¼ÊÇ6000*3600£¬µ¼ÖÂ³öÏÖÇÐ¼¸ÕÅÍ¼ºó¾ÍºÚÆÁÁË¡£¡£¡£
+	        fs.Close();
+	        int height = 2048;
+	        int width = 2048;
 	        Texture2D texture = new Texture2D(width, height);
 	        if (texture.LoadImage(bytes))
 	        {
 	            Debug.Log("[IO] Load Image succesfully " + path);
-	            return texture;//½«Éú³ÉµÄtexture2d·µ»Ø£¬µ½ÕâÀï¾ÍµÃµ½ÁËÍâ²¿µÄÍ¼Æ¬£¬¿ÉÒÔÊ¹ÓÃÁË
-	
+	            return texture;
 	        }
 	        else
 	        {
