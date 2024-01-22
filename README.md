@@ -1,5 +1,5 @@
 # TinyUFramework
- A tiny UI framework for unity project
+ A tiny framework for unity project
 
 ## Package(Plugin) Required：
 
